@@ -15,6 +15,8 @@ import org.netbeans.zp.message.Message;
 import org.netbeans.zp.message.MessageType;
 
 /**
+ * Testowanie klienta XMPP w konsoli.
+ * Klasa tymczasowa, finalnie moze zostac wywalona.
  *
  * @author Bartłomiej Hyży <hyzy.bartlomiej at gmail.com>
  */
