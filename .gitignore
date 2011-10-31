@@ -3,3 +3,4 @@
 *.log
 
 nbproject/**
+build.xml
