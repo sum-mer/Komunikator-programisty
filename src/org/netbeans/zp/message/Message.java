@@ -5,11 +5,13 @@
 
 package org.netbeans.zp.message;
 
+import java.io.Serializable;
+
 /**
  *
  * @author Bartłomiej Hyży <hyzy.bartlomiej at gmail.com>
  */
-public abstract class Message {
+public abstract class Message implements Serializable {
 
   public String UserID;
 

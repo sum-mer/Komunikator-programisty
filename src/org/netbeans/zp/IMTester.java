@@ -8,7 +8,11 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import org.jivesoftware.smack.XMPPException;
+import org.netbeans.zp.client.ClientMessageListener;
 import org.netbeans.zp.client.XMPPClient;
+import org.netbeans.zp.message.GroupMessage;
+import org.netbeans.zp.message.Message;
+import org.netbeans.zp.message.MessageType;
 
 /**
  *
@@ -46,6 +50,21 @@ public class IMTester
 	  System.out.println("Joining room " + actionTokens[1] + " as " + actionTokens[2]);
 	  client.joinCollaboration(actionTokens[1], actionTokens[2]);
 	}
+
+	client.addMessageListener(new ClientMessageListener() {
+	  public void handle(Message message) {
+		if (message.getType() == MessageType.GroupMessage) {
+		  GroupMessage msg = (GroupMessage)message;
+		  System.out.println( "<" + msg.UserID + "> " + msg.Body );
+		}
+	  }
+	});
+
+//	NewSourceAddedMessage m = new NewSourceAddedMessage();
+//	m.FileDirectory = "src/test/";
+//	m.FileName = "main.cpp";
+//	m.SourceCode = "int main(int argc, char** argv) { return 0; }";
+//	client.sendCodeMessage( m );
 
 	String msg;
 	while ( !(msg = br.readLine()).equals("end") ) {

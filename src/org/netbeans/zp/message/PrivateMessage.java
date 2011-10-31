@@ -5,11 +5,13 @@
 
 package org.netbeans.zp.message;
 
+import java.io.Serializable;
+
 /**
  *
  * @author Bartłomiej Hyży <hyzy.bartlomiej at gmail.com>
  */
-public class PrivateMessage extends Message {
+public class PrivateMessage extends Message implements Serializable {
 
   public String Body;
 
