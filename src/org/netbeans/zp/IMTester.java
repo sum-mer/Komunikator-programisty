@@ -20,57 +20,60 @@ import org.netbeans.zp.message.MessageType;
  *
  * @author Bartłomiej Hyży <hyzy.bartlomiej at gmail.com>
  */
-public class IMTester
-{
+public class IMTester {
 
   public static void main(String args[]) throws IOException, XMPPException {
 
-	XMPPClient client = new XMPPClient();
-	System.out.println("Connecting...");
-	client.connect();
+    XMPPClient client = new XMPPClient();
+    System.out.println("Connecting...");
+    client.connect();
 
-	BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+// Żeby sprawdzić jak działa rejestracja trzeba odkomentować dwie poniższe linijki i zakomentować całą resztę.
+//    Register r = new Register(client);
+//     (new Thread(r)).start();
+    
+    BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
-	System.out.print("login: ");
-	String login = br.readLine();
-	System.out.print("password: ");
-	String password = br.readLine();
+    System.out.print("login: ");
+    String login = br.readLine();
+    System.out.print("password: ");
+    String password = br.readLine();
 
-	System.out.println("Loging in...");
-	client.login(login, password);
+    System.out.println("Loging in...");
+    client.login(login, password);
 
-	System.out.print("Logged in. Action: ");
-	String action = br.readLine();
+    System.out.print("Logged in. Action: ");
+    String action = br.readLine();
 
-	String[] actionTokens = action.split("\\s");
-	if (actionTokens[0].equals("create")) {
-	  System.out.println("Creating room " + actionTokens[1] + " as " + actionTokens[2]);
-	  String roomID = client.createCollaboration(actionTokens[1], actionTokens[2]);
-	  System.out.println("Created room " + roomID);
-	}
-	else if (actionTokens[0].equals("join")) {
-	  System.out.println("Joining room " + actionTokens[1] + " as " + actionTokens[2]);
-	  client.joinCollaboration(actionTokens[1], actionTokens[2]);
-	}
+    String[] actionTokens = action.split("\\s");
+    if (actionTokens[0].equals("create")) {
+      System.out.println("Creating room " + actionTokens[1] + " as " + actionTokens[2]);
+      String roomID = client.createCollaboration(actionTokens[1], actionTokens[2]);
+      System.out.println("Created room " + roomID);
+    } else if (actionTokens[0].equals("join")) {
+      System.out.println("Joining room " + actionTokens[1] + " as " + actionTokens[2]);
+      client.joinCollaboration(actionTokens[1], actionTokens[2]);
+    }
 
-	client.addMessageListener(new ClientMessageListener() {
-	  public void handle(Message message) {
-		if (message.getType() == MessageType.GroupMessage) {
-		  GroupMessage msg = (GroupMessage)message;
-		  System.out.println( "<" + msg.UserID + "> " + msg.Body );
-		}
-	  }
-	});
+    client.addMessageListener(new ClientMessageListener() {
+
+      public void handle(Message message) {
+        if (message.getType() == MessageType.GroupMessage) {
+          GroupMessage msg = (GroupMessage) message;
+          System.out.println("<" + msg.UserID + "> " + msg.Body);
+        }
+      }
+    });
 
 //	NewSourceAddedMessage m = new NewSourceAddedMessage();
 //	m.FileDirectory = "src/test/";
 //	m.FileName = "main.cpp";
 //	m.SourceCode = "int main(int argc, char** argv) { return 0; }";
 //	client.sendCodeMessage( m );
-
-	String msg;
-	while ( !(msg = br.readLine()).equals("end") ) {
-	  client.sendChatMessage(msg);
-	}
+//
+    String msg;
+    while (!(msg = br.readLine()).equals("end")) {
+      client.sendChatMessage(msg);
+    }
   }
 }
