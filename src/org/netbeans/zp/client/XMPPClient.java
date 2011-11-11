@@ -1,11 +1,8 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package org.netbeans.zp.client;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
 import org.jivesoftware.smack.ConnectionConfiguration;
 import org.jivesoftware.smack.PacketListener;
@@ -33,6 +30,7 @@ import org.netbeans.zp.message.PrivateMessage;
  * zaznaczyc konkretny kawalek kodu lub dodac jakis nowy, itp.
  *
  * @author Bartłomiej Hyży <hyzy.bartlomiej at gmail.com>
+ * @author Bartłomiej Bułat <bartek.bulat at gmail.com>
  */
 public class XMPPClient implements PacketListener {
 
@@ -90,6 +88,7 @@ public class XMPPClient implements PacketListener {
     _connection = new XMPPConnection(config);
     _connection.addPacketListener(this, new PacketFilter() {
 
+      @Override
       public boolean accept(Packet packet) {
         return true;
       }
@@ -117,23 +116,58 @@ public class XMPPClient implements PacketListener {
     _connection.login(userName, password);
   }
 
-  /*
+  /**
    * Rejestruje na serwerze nowego uzytkownika
    * @param attributes Mapa atrubutów wymaganych do rejestracji
+   * @return ID wysłanego pakietu
+   * @throws XMPPException 
    */
-  public void register(Map<String, String> attributes) throws XMPPException {
+  public String register(Map<String, String> attributes) throws XMPPException {
     Registration r = new Registration();
     r.setAttributes(attributes);
     r.setType(Type.SET);
     _connection.sendPacket(r);
+    return r.getPacketID();
+  }
+  /**
+   * Aktualizuje atrybuty zalogowanego użytkownika (np. hasło)
+   * @param attributes Mapa atrubutów wymaganych do rejestracji
+   * @throws XMPPException Jeśli użytkownik nie jest zalogowany
+   * @return ID wysłanego pakietu
+   */
+  public String setNewAttributes(Map<String, String> attributes) throws XMPPException {
+    if (! _connection.isAuthenticated()) throw new XMPPException("Not authenticated");
+    Registration r = new Registration();
+    r.setAttributes(attributes);
+    r.setType(Type.SET);
+    _connection.sendPacket(r);
+    return r.getPacketID();
   }
   
-  /*
-   * Wysyła do serwera pakiet pytający o wymagane pola rejestracyjne.
+  /**
+   * Usuwa z serwera zalogowanego użytkownika
+   * @return ID wysłanego pakietu
+   * @throws XMPPException Jeśli użytkownik nie jest zalogowany
    */
-  public void getRegistrationFields() {
+  public String removeUser() throws XMPPException {
+    if (! _connection.isAuthenticated()) throw new XMPPException("Not authenticated");
+    Registration r = new Registration();
+    Map<String, String> attr = new HashMap<String, String>();
+    attr.put("remove", "");    
+    r.setAttributes(attr);
+    r.setType(Type.SET);
+    _connection.sendPacket(r);
+    return r.getPacketID();
+  }
+  
+  /**
+   * Wysyła do serwera pakiet pytający o sposób rejestracji.
+   * @return ID wysłanego pakietu
+   */
+  public String getInvitationMessage() {
     Registration r = new Registration();
     _connection.sendPacket(r);
+    return r.getPacketID();
   }
 
   /*
@@ -187,14 +221,13 @@ public class XMPPClient implements PacketListener {
 
       if (r.getType() == Type.RESULT) {
         if (r.getInstructions() != null) { // Jeśli ma instrukcję jest to pakiet informacyjny
-          Map<String, String> attributes = r.getAttributes();
-          _registrationListener.setRegistrationFields(attributes.keySet());
+          _registrationListener.invitation(r);
           
         } else {
-          _registrationListener.success();
+          _registrationListener.success(r);
         }
       } else if (r.getType() == Type.ERROR) {
-        _registrationListener.error(r.getError()); 
+        _registrationListener.error(r); 
       }
     } else {
       org.jivesoftware.smack.packet.Message message = (org.jivesoftware.smack.packet.Message) packet;

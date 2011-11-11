@@ -1,19 +1,13 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package org.netbeans.zp.client;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.jivesoftware.smack.XMPPException;
-import org.jivesoftware.smack.packet.XMPPError;
+import org.jivesoftware.smack.packet.Registration;
 import org.netbeans.zp.IMTester;
 
 /**
@@ -33,9 +27,9 @@ public class Register implements RegistrationListener, Runnable {
   }
   
   @Override
-  public void setRegistrationFields(Set<String> fields) {
-    Map<String,String> attr = new HashMap<String, String>();
-        for( String s: fields ) {
+  public void invitation(Registration msg) {
+    Map<String,String> attr = msg.getAttributes();
+        for( String s: attr.keySet() ) {
           System.out.println("Wartosc " + s + ": ");
           try {
             String v = br.readLine();
@@ -52,19 +46,19 @@ public class Register implements RegistrationListener, Runnable {
   }
 
   @Override
-  public void success() {
+  public void success(Registration msg) {
     System.out.println("Pomyślnie zarejestrowano użytkownika");
   }
 
   @Override
-  public void error(XMPPError er) {
-    System.out.println("Błąd " + er.getCode() + " type: " + er.getType().toString() + "msg: " + er.getMessage());
-    c.getRegistrationFields();
+  public void error(Registration msg) {
+    System.out.println("Błąd " + msg.getError().getCode() + " type: " + msg.getError().getType().toString() + "msg: " + msg.getError().getMessage());
+    c.getInvitationMessage();
   }
 
   @Override
   public void run() {
-    c.getRegistrationFields();
+    c.getInvitationMessage();
   }
   
   

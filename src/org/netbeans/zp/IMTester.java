@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package org.netbeans.zp;
 
 import java.io.BufferedReader;
@@ -10,6 +6,7 @@ import java.io.InputStreamReader;
 import org.jivesoftware.smack.XMPPException;
 import org.netbeans.zp.client.ClientMessageListener;
 import org.netbeans.zp.client.XMPPClient;
+import org.netbeans.zp.client.Register;
 import org.netbeans.zp.message.GroupMessage;
 import org.netbeans.zp.message.Message;
 import org.netbeans.zp.message.MessageType;
@@ -31,7 +28,7 @@ public class IMTester {
 // Żeby sprawdzić jak działa rejestracja trzeba odkomentować dwie poniższe linijki i zakomentować całą resztę.
 //    Register r = new Register(client);
 //     (new Thread(r)).start();
-    
+
     BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
     System.out.print("login: ");

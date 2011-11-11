@@ -1,34 +1,33 @@
 package org.netbeans.zp.client;
 
-import java.util.Set;
-import org.jivesoftware.smack.packet.XMPPError;
-import org.jivesoftware.smack.packet.XMPPError.Type;
+import org.jivesoftware.smack.packet.Registration;
 
 /**
  * Interfejs nasłuchujący komunikatów związanych z rejestracją.
- * Powinna go implemoentować klasa GUI odpowiedzialna za rejestrację.
+ * Powinna go implementować klasa GUI odpowiedzialna za rejestrację
+ * i/lub zarządzanie kontem.
  * 
  * @author Bartłomiej Bułat <bartek.bulat at gmail.com>
  */
 public interface RegistrationListener {
   
   /**
-   * Serwer zwrócił wymagane pola do rejestracji.
-   * @param fields Zbiór wymaganych pól.
+   * Serwer zwrócił wiadomość z zaproszeniem.
+   * @param msg Wiadomość serwera
    */
-  public void setRegistrationFields(Set<String> fields);
+  public void invitation(Registration msg);
   
   /**
-   * Rejestracja zakończona sukcesem.
+   * Operacja związana z rejestracją (dodanie, aktualizacja lub usunięcie użytkownika) zakończona sukcesem.
+   * @param msg Wiadomość serwera
    */
-  public void success();
+  public void success(Registration msg);
   
   /**
-   * Procedura rejestracji zwróciła błąd.
+   * Procedura związana z rejestracją zwróciła błąd.
    * Opis poszczególnych kodów: http://xmpp.org/extensions/xep-0086.html
-   * @param code Kod błedy
-   * @param type Typ błędu
+   * @param msg Wiadomość serwera
    */
-  public void error(XMPPError er);
+  public void error(Registration msg);
   
 }
