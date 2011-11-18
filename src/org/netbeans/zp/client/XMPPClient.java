@@ -74,10 +74,18 @@ public class XMPPClient implements PacketListener {
   }
 
   /*
-   * Konstruktor - tworzy klienta
+   * Konstruktor (chroniony - singleton) - tworzy klienta
    */
-  public XMPPClient() {
+  protected XMPPClient() {
     _messageListeners = new ArrayList<ClientMessageListener>();
+  }
+
+  private static XMPPClient instance = null;
+  public XMPPClient getInstance() {
+	if (instance == null) {
+	  instance = new XMPPClient();
+	}
+	return instance;
   }
 
   /*
