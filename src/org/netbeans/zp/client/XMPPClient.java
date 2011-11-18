@@ -271,6 +271,7 @@ public class XMPPClient implements PacketListener {
    */
   public void sendChatMessage(String message) throws XMPPException {
     GroupMessage groupMsg = new GroupMessage();
+	groupMsg.UserID = _collaboration.getNickname();
     groupMsg.Body = message;
     sendCodeMessage(groupMsg);
   }
@@ -283,7 +284,7 @@ public class XMPPClient implements PacketListener {
    */
   public void sendChatMessage(String message, String to) throws XMPPException {
     PrivateMessage privateMsg = new PrivateMessage();
-    privateMsg.UserID = _collaboration.getNickname();
+    privateMsg.UserID = _connection.getUser();
     privateMsg.Body = message;
 
     org.jivesoftware.smack.packet.Message msg = new Message(to);
