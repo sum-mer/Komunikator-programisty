@@ -63,7 +63,6 @@ public class XMPPClient implements PacketListener {
    * kontener z nasluchiwaczami komunikatow
    */
   private ArrayList<ClientMessageListener> _messageListeners;
-  
   /*
    * Obiekt rejestrujący użytkownika
    */
@@ -79,13 +78,13 @@ public class XMPPClient implements PacketListener {
   protected XMPPClient() {
     _messageListeners = new ArrayList<ClientMessageListener>();
   }
-
   private static XMPPClient instance = null;
-  public XMPPClient getInstance() {
-	if (instance == null) {
-	  instance = new XMPPClient();
-	}
-	return instance;
+
+  public static XMPPClient getInstance() {
+    if (instance == null) {
+      instance = new XMPPClient();
+    }
+    return instance;
   }
 
   /*
@@ -95,17 +94,15 @@ public class XMPPClient implements PacketListener {
     ConnectionConfiguration config = new ConnectionConfiguration(SERVER_ADDRESS, SERVER_PORT);
     _connection = new XMPPConnection(config);
     _connection.addPacketListener(this, new PacketFilter() {
-
       @Override
       public boolean accept(Packet packet) {
         return true;
       }
     });
-    try {
-      _connection.connect();
-    } catch (XMPPException ex) {
-      System.out.println(ex.getMessage());
-    }
+    
+    
+    _connection.connect();
+
   }
 
   /*
@@ -120,8 +117,15 @@ public class XMPPClient implements PacketListener {
    * @param userName login uzytkownika
    * @param password haslo uzytkownika
    */
-  public void login(String userName, String password) throws XMPPException {
-    _connection.login(userName, password);
+  public boolean login(String userName, String password) {
+    try {
+      _connection.getSASLAuthentication();
+      _connection.login(userName, password);
+      return true;
+    } catch (XMPPException ex) {
+      System.out.println(ex.getMessage());
+      return false;
+    }
   }
 
   /**
@@ -132,11 +136,13 @@ public class XMPPClient implements PacketListener {
    */
   public String register(Map<String, String> attributes) throws XMPPException {
     Registration r = new Registration();
+    r.setTo(SERVER_ADDRESS);
     r.setAttributes(attributes);
     r.setType(Type.SET);
     _connection.sendPacket(r);
     return r.getPacketID();
   }
+
   /**
    * Aktualizuje atrybuty zalogowanego użytkownika (np. hasło)
    * @param attributes Mapa atrubutów wymaganych do rejestracji
@@ -144,36 +150,42 @@ public class XMPPClient implements PacketListener {
    * @return ID wysłanego pakietu
    */
   public String setNewAttributes(Map<String, String> attributes) throws XMPPException {
-    if (! _connection.isAuthenticated()) throw new XMPPException("Not authenticated");
+    if (!_connection.isAuthenticated()) {
+      throw new XMPPException("Not authenticated");
+    }
     Registration r = new Registration();
+    r.setTo(SERVER_ADDRESS);
     r.setAttributes(attributes);
     r.setType(Type.SET);
     _connection.sendPacket(r);
     return r.getPacketID();
   }
-  
+
   /**
    * Usuwa z serwera zalogowanego użytkownika
    * @return ID wysłanego pakietu
    * @throws XMPPException Jeśli użytkownik nie jest zalogowany
    */
   public String removeUser() throws XMPPException {
-    if (! _connection.isAuthenticated()) throw new XMPPException("Not authenticated");
+    if (!_connection.isAuthenticated()) {
+      throw new XMPPException("Not authenticated");
+    }
     Registration r = new Registration();
     Map<String, String> attr = new HashMap<String, String>();
-    attr.put("remove", "");    
+    attr.put("remove", "");
     r.setAttributes(attr);
     r.setType(Type.SET);
     _connection.sendPacket(r);
     return r.getPacketID();
   }
-  
+
   /**
    * Wysyła do serwera pakiet pytający o sposób rejestracji.
    * @return ID wysłanego pakietu
    */
   public String getInvitationMessage() {
     Registration r = new Registration();
+    r.setTo(SERVER_ADDRESS);
     _connection.sendPacket(r);
     return r.getPacketID();
   }
@@ -200,7 +212,7 @@ public class XMPPClient implements PacketListener {
   public void addMessageListener(ClientMessageListener listener) {
     _messageListeners.add(listener);
   }
-  
+
   /*
    * Usuwa nasluchiwacza wiadomosci
    * @param listener nasluchiwacz wiadomosci
@@ -220,22 +232,25 @@ public class XMPPClient implements PacketListener {
    * Obsluguje podany pakiet XMPP - rozsyla go do wszystkich nasluchiwaczy,
    * jeśli pakiet jest pakietem rejestracyjnym trafie do odpowiedniego słuchacza.
    */
+
   @Override
   public void processPacket(Packet packet) {
 
     if (packet instanceof Registration) {
-      if (_registrationListener == null) throw new RuntimeException("Brak nasłuchiwacza procesu rejestracji.");
+      if (_registrationListener == null) {
+        throw new RuntimeException("Brak nasłuchiwacza procesu rejestracji.");
+      }
       Registration r = (Registration) packet;
 
       if (r.getType() == Type.RESULT) {
         if (r.getInstructions() != null) { // Jeśli ma instrukcję jest to pakiet informacyjny
           _registrationListener.invitation(r);
-          
+
         } else {
           _registrationListener.success(r);
         }
       } else if (r.getType() == Type.ERROR) {
-        _registrationListener.error(r); 
+        _registrationListener.error(r);
       }
     } else {
       org.jivesoftware.smack.packet.Message message = (org.jivesoftware.smack.packet.Message) packet;
@@ -279,7 +294,7 @@ public class XMPPClient implements PacketListener {
    */
   public void sendChatMessage(String message) throws XMPPException {
     GroupMessage groupMsg = new GroupMessage();
-	groupMsg.UserID = _collaboration.getNickname();
+    groupMsg.UserID = _collaboration.getNickname();
     groupMsg.Body = message;
     sendCodeMessage(groupMsg);
   }

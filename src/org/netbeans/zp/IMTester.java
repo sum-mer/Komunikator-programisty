@@ -21,9 +21,8 @@ public class IMTester {
 
   public static void main(String args[]) throws IOException, XMPPException {
 
-    XMPPClient client = new XMPPClient();
     System.out.println("Connecting...");
-    client.connect();
+    XMPPClient.getInstance().connect();
 
 // Żeby sprawdzić jak działa rejestracja trzeba odkomentować dwie poniższe linijki i zakomentować całą resztę.
 //    Register r = new Register(client);
@@ -37,7 +36,7 @@ public class IMTester {
     String password = br.readLine();
 
     System.out.println("Loging in...");
-    client.login(login, password);
+    XMPPClient.getInstance().login(login, password);
 
     System.out.print("Logged in. Action: ");
     String action = br.readLine();
@@ -45,14 +44,14 @@ public class IMTester {
     String[] actionTokens = action.split("\\s");
     if (actionTokens[0].equals("create")) {
       System.out.println("Creating room " + actionTokens[1] + " as " + actionTokens[2]);
-      String roomID = client.createCollaboration(actionTokens[1], actionTokens[2]);
+      String roomID = XMPPClient.getInstance().createCollaboration(actionTokens[1], actionTokens[2]);
       System.out.println("Created room " + roomID);
     } else if (actionTokens[0].equals("join")) {
       System.out.println("Joining room " + actionTokens[1] + " as " + actionTokens[2]);
-      client.joinCollaboration(actionTokens[1], actionTokens[2]);
+      XMPPClient.getInstance().joinCollaboration(actionTokens[1], actionTokens[2]);
     }
 
-    client.addMessageListener(new ClientMessageListener() {
+    XMPPClient.getInstance().addMessageListener(new ClientMessageListener() {
 
       public void handle(Message message) {
         if (message.getType() == MessageType.GroupMessage) {
@@ -70,7 +69,7 @@ public class IMTester {
 //
     String msg;
     while (!(msg = br.readLine()).equals("end")) {
-      client.sendChatMessage(msg);
+      XMPPClient.getInstance().sendChatMessage(msg);
     }
   }
 }

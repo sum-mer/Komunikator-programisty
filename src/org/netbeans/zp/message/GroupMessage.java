@@ -6,6 +6,7 @@
 package org.netbeans.zp.message;
 
 import java.io.Serializable;
+import org.netbeans.zp.message.MessageType;
 
 /**
  * Komunikat - wiadomosc grupowa wyslana dla wszystkich w pokoju.

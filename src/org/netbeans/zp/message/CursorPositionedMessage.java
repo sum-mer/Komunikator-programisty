@@ -6,6 +6,8 @@
 package org.netbeans.zp.message;
 
 import java.io.Serializable;
+import org.netbeans.zp.message.Message;
+import org.netbeans.zp.message.MessageType;
 
 /**
  * Komunikat - uzytkownik ustawil kursor na podanej
