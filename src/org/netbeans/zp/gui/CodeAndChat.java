@@ -23,6 +23,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JScrollPane;
 import javax.swing.text.Caret;
 import org.jivesoftware.smack.XMPPException;
+import org.jivesoftware.smackx.muc.MultiUserChat;
 import org.netbeans.zp.client.ClientMessageListener;
 import org.netbeans.zp.client.XMPPClient;
 import org.netbeans.zp.message.CursorPositionedMessage;
@@ -41,7 +42,6 @@ import org.netbeans.zp.message.SourceCodeRemovedMessage;
 public class CodeAndChat extends javax.swing.JDialog implements ClientMessageListener, Runnable {
     private String f;
     private String n;
-    private String roomID;
     private ArrayList<JEditorPane> editorsList;
     private int filesNumber = 0;
     private boolean isSaved = false;
@@ -64,7 +64,7 @@ public class CodeAndChat extends javax.swing.JDialog implements ClientMessageLis
             }
             msg.UserID = n;
             try {
-                XMPPClient.getInstance().sendCodeMessage(msg);
+                XMPPClient.getInstance().sendPrivateCodeMessage(msg, f);
             } catch (XMPPException ex) {
                 Logger.getLogger(CodeAndChat.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -77,7 +77,7 @@ public class CodeAndChat extends javax.swing.JDialog implements ClientMessageLis
             msg.UserID = n;
             editorArea1.addInputMethodListener(null);
             try {
-                XMPPClient.getInstance().sendCodeMessage(msg);
+                XMPPClient.getInstance().sendPrivateCodeMessage(msg, f);
             } catch (XMPPException ex) {
                 Logger.getLogger(CodeAndChat.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -223,7 +223,7 @@ public class CodeAndChat extends javax.swing.JDialog implements ClientMessageLis
     private void sendBtnMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_sendBtnMouseClicked
         String msg = n+"\n"+msgArea.getText();
         try {
-            XMPPClient.getInstance().sendChatMessage(msg);
+            XMPPClient.getInstance().sendChatMessage(msg, f);
         } catch (XMPPException ex) {
             Logger.getLogger(CodeAndChat.class.getName()).log(Level.SEVERE, null, ex);
         }

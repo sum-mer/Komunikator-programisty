@@ -20,6 +20,7 @@ import javax.swing.JEditorPane;
 import javax.swing.JFileChooser;
 import javax.swing.JScrollPane;
 import org.jivesoftware.smack.XMPPException;
+import org.jivesoftware.smackx.muc.MultiUserChat;
 import org.netbeans.zp.client.ClientMessageListener;
 import org.netbeans.zp.client.XMPPClient;
 import org.netbeans.zp.message.CursorPositionedMessage;
@@ -37,6 +38,7 @@ import org.netbeans.zp.message.SourceCodeRemovedMessage;
  */
 public class CodeAndConference extends javax.swing.JDialog implements ClientMessageListener, Runnable {
 
+  private MultiUserChat collaboration = null;
   private ArrayList<String> f;
   private String n;
   private String roomID;
@@ -63,7 +65,7 @@ public class CodeAndConference extends javax.swing.JDialog implements ClientMess
       }
       msg.UserID = n;
       try {
-        XMPPClient.getInstance().sendCodeMessage(msg);
+        XMPPClient.getInstance().sendCodeMessage(collaboration, msg);
       } catch (XMPPException ex) {
         Logger.getLogger(CodeAndChat.class.getName()).log(Level.SEVERE, null, ex);
       }
@@ -76,7 +78,7 @@ public class CodeAndConference extends javax.swing.JDialog implements ClientMess
       msg.UserID = n;
       editorArea1.addInputMethodListener(null);
       try {
-        XMPPClient.getInstance().sendCodeMessage(msg);
+        XMPPClient.getInstance().sendCodeMessage(collaboration, msg);
       } catch (XMPPException ex) {
         Logger.getLogger(CodeAndChat.class.getName()).log(Level.SEVERE, null, ex);
       }
@@ -91,7 +93,7 @@ public class CodeAndConference extends javax.swing.JDialog implements ClientMess
 
     f = friends;
     n = nickname;
-    roomID = XMPPClient.getInstance().createCollaboration(n, n);
+    collaboration = XMPPClient.getInstance().createCollaboration(n, n);
     XMPPClient.getInstance().addMessageListener(this);
   }
 
@@ -302,7 +304,7 @@ public class CodeAndConference extends javax.swing.JDialog implements ClientMess
       // TODO add your handling code here:
       String msg = n + "\n" + msgArea.getText();
       try {
-        XMPPClient.getInstance().sendChatMessage(msg);
+        XMPPClient.getInstance().sendChatMessage(collaboration, msg);
       } catch (XMPPException ex) {
         Logger.getLogger(CodeAndChat.class.getName()).log(Level.SEVERE, null, ex);
       }

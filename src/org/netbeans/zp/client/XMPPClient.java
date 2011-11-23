@@ -16,6 +16,8 @@ import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Packet;
 import org.jivesoftware.smack.packet.Registration;
 import org.jivesoftware.smackx.Form;
+import org.jivesoftware.smackx.GroupChatInvitation;
+import org.jivesoftware.smackx.muc.InvitationListener;
 import org.jivesoftware.smackx.muc.MultiUserChat;
 import org.netbeans.zp.message.GroupMessage;
 import org.netbeans.zp.message.PrivateMessage;
@@ -53,11 +55,6 @@ public class XMPPClient implements PacketListener {
    * polaczenie z serwerem Jabbera
    */
   private XMPPConnection _connection;
-
-  /*
-   * uchwyt do pokoju, w ktorym nastepuje wspolpraca
-   */
-  private MultiUserChat _collaboration;
 
   /*
    * kontener z nasluchiwaczami komunikatow
@@ -263,19 +260,22 @@ public class XMPPClient implements PacketListener {
     }
   }
 
-  /*
+  /**
    * Tworzy nowa pokoj, w ktorym nastepowac bedzie wspolpraca
    * @param room nazwa stolu, np. "robimyProjekt_z_ZP"
    * @param owner nick jakim bedziemy sie jako tworcy pokoju posluwiac na nim
+   * @return Instancję pokoju który utworzyliśmy
    */
-  public String createCollaboration(String room, String owner) throws XMPPException {
+  public MultiUserChat createCollaboration(String room, String owner) throws XMPPException {
+    MultiUserChat collaboration = null;
+    
     String roomID = String.format("%s@%s", room, SERVER_CONFERENCE_ADDRESS);
 
-    _collaboration = new MultiUserChat(_connection, roomID);
-    _collaboration.create(owner);
-    _collaboration.sendConfigurationForm(new Form(Form.TYPE_SUBMIT));
+    collaboration = new MultiUserChat(_connection, roomID);
+    collaboration.create(owner);
+    collaboration.sendConfigurationForm(new Form(Form.TYPE_SUBMIT));
 
-    return roomID;
+    return collaboration;
   }
 
   /*
@@ -283,20 +283,32 @@ public class XMPPClient implements PacketListener {
    * @param room *pelna* nazwa pokoju, np. "robimyProjekt_z_ZP@conference.draugr.de"
    * @param nickname nick pod jakim bedziemy widoczni w pokoju
    */
-  public void joinCollaboration(String room, String nickname) throws XMPPException {
-    _collaboration = new MultiUserChat(_connection, room);
-    _collaboration.join(nickname);
+  public MultiUserChat joinCollaboration(String room, String nickname) throws XMPPException {
+    MultiUserChat collaboration = new MultiUserChat(_connection, room);
+    collaboration.join(nickname);
+    
+    return collaboration;
   }
+  
+  
+  /**
+   * Dodaj słuchacza wiadomosci z zaproszeniami
+   * @param listener Obiekt implementujący InvitationListenera
+   */
+  public void addInvitationListener(InvitationListener listener) {
+    MultiUserChat.addInvitationListener(_connection, listener);
+  }
+
 
   /*
    * Wysyla wiadomosc tekstowa do wszystkich w pokoju
    * @param message tresc wiadomosci
    */
-  public void sendChatMessage(String message) throws XMPPException {
+  public void sendChatMessage(MultiUserChat collaboration, String message) throws XMPPException {
     GroupMessage groupMsg = new GroupMessage();
-    groupMsg.UserID = _collaboration.getNickname();
+    groupMsg.UserID = collaboration.getNickname();
     groupMsg.Body = message;
-    sendCodeMessage(groupMsg);
+    sendCodeMessage(collaboration, groupMsg);
   }
 
   /*
@@ -323,10 +335,22 @@ public class XMPPClient implements PacketListener {
    * konkretnego fragmentu kodu, itp.
    * @param message obiekt dowolnej klasy komunikatu dziedziczacej po Message
    */
-  public void sendCodeMessage(org.netbeans.zp.message.Message message) throws XMPPException {
-    org.jivesoftware.smack.packet.Message msg = _collaboration.createMessage();
-    message.UserID = _collaboration.getNickname();
+  public void sendCodeMessage(MultiUserChat collaboration, org.netbeans.zp.message.Message message) throws XMPPException {
+    org.jivesoftware.smack.packet.Message msg = collaboration.createMessage();
+    message.UserID = collaboration.getNickname();
     msg.setProperty("metadata", message);
-    _collaboration.sendMessage(msg);
+    collaboration.sendMessage(msg);
+  }
+
+  /**
+   * Wysyła wiadomośc o zmiane kodu w prywatnej rozmowie
+   * @param message obiekt dowolnej klasy komunikatu dziedziczacej po Message
+   * @param to identyfikator odbiorcy, moze byc globalny (bartek@draugr.de)
+  albo lokalny (robimyProjekt_z_ZP@conference.draugr.de/dowolny_nick_uzytkownika)
+   */
+  public void sendPrivateCodeMessage(org.netbeans.zp.message.Message message, String to) throws XMPPException {
+    org.jivesoftware.smack.packet.Message msg = new Message(to);
+    msg.setProperty("metadata", message);
+    _connection.sendPacket(msg);
   }
 }

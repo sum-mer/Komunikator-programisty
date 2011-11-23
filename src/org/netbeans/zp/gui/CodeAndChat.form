@@ -39,7 +39,7 @@
                   <Component id="jScrollPane3" pref="184" max="32767" attributes="0"/>
                   <Group type="102" alignment="1" attributes="0">
                       <Component id="commentBtn" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace pref="40" max="32767" attributes="0"/>
+                      <EmptySpace pref="49" max="32767" attributes="0"/>
                       <Component id="sendBtn" min="-2" max="-2" attributes="0"/>
                   </Group>
               </Group>
