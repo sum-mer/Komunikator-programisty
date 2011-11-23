@@ -309,15 +309,20 @@ public class KomunikatorView extends FrameView {
       String login, password = null;
       login = loginField.getText();
       password = String.valueOf( passwordField.getPassword() );
-      if (XMPPClient.getInstance().login(login, password)) {
+      try {
+        if( ! XMPPClient.getInstance().isConnected() ) {
+          XMPPClient.getInstance().connect();
+        }
+        XMPPClient.getInstance().login(login, password);
         KomunikatorApp.getApplication().hide(this); // ukrywanie okna logowania
         if (newUserVar == null) {
           JFrame mainFrame = KomunikatorApp.getApplication().getMainFrame();
           communicator = new RealApp(mainFrame, true, login);
-          //communicator.setLocationRelativeTo(mainFrame);
+          communicator.setLocationRelativeTo(mainFrame);
           KomunikatorApp.getApplication().show(communicator);
         }
-      } else {
+      } catch(XMPPException ex) {
+        System.out.println(ex);
         JOptionPane.showMessageDialog( this.getComponent(), "Nie udało się zalogować");
       }
 

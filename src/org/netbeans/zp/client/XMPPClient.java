@@ -102,7 +102,6 @@ public class XMPPClient implements PacketListener {
     
     
     _connection.connect();
-
   }
 
   /*
@@ -111,21 +110,22 @@ public class XMPPClient implements PacketListener {
   public void disconnect() {
     _connection.disconnect();
   }
+  
+  /**
+   * Czy jest nawiązane połaczenie.
+   * @return Prawda lub fałsz
+   */
+  public boolean isConnected() {
+    return _connection.isConnected();
+  }
 
   /*
    * Loguje sie na serwer Jabbera (konto musi byc wczesniej utworzone)
    * @param userName login uzytkownika
    * @param password haslo uzytkownika
    */
-  public boolean login(String userName, String password) {
-    try {
-      _connection.getSASLAuthentication();
-      _connection.login(userName, password);
-      return true;
-    } catch (XMPPException ex) {
-      System.out.println(ex.getMessage());
-      return false;
-    }
+  public void login(String userName, String password) throws XMPPException {
+    _connection.login(userName, password);
   }
 
   /**
