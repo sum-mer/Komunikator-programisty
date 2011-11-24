@@ -1,0 +1,18 @@
+## generic and temp files
+*~
+*.tmp
+*.bak
+*.log
+*.aux
+*.toc
+*.idx
+*.synctex.gz
+*.bbl
+*.blg
+[#]*[#]
+
+
+## output
+*.out
+*.dvi
+*.pdf
