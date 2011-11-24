@@ -31,10 +31,10 @@ public class KomunikatorView extends FrameView {
     super(app);
     initComponents();
     try {
-      XMPPClient.getInstance().connect();
+        XMPPClient.getInstance().connect();
     } catch (XMPPException ex) {
-      JOptionPane.showMessageDialog( this.getComponent(), "Nie udało się połączyć z serwerem");
-      System.out.println(ex.getMessage());
+        JOptionPane.showMessageDialog( this.getComponent(), "Nie udało się połączyć z serwerem");
+        System.out.println(ex.getMessage());
     }
     getFrame().setMinimumSize(new Dimension(400, 400));
 
@@ -117,7 +117,8 @@ public class KomunikatorView extends FrameView {
   }
 
   public static void closeApp() {
-    KomunikatorApp.getApplication().exit();
+      XMPPClient.getInstance().disconnect();
+      KomunikatorApp.getApplication().exit();
   }
 
   /** This method is called from within the constructor to
@@ -135,6 +136,7 @@ public class KomunikatorView extends FrameView {
         logInBtn = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
+        signInBtn = new javax.swing.JButton();
         jLabel3 = new javax.swing.JLabel();
         menuBar = new javax.swing.JMenuBar();
         javax.swing.JMenu fileMenu = new javax.swing.JMenu();
@@ -173,32 +175,44 @@ public class KomunikatorView extends FrameView {
         jLabel2.setText(resourceMap.getString("jLabel2.text")); // NOI18N
         jLabel2.setName("jLabel2"); // NOI18N
 
-        jLabel3.setText(resourceMap.getString("jLabel3.text")); // NOI18N
-        jLabel3.setName("jLabel3"); // NOI18N
-        jLabel3.addMouseListener(new java.awt.event.MouseAdapter() {
+        signInBtn.setText(resourceMap.getString("signInBtn.text")); // NOI18N
+        signInBtn.setName("signInBtn"); // NOI18N
+        signInBtn.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jLabel3MouseClicked(evt);
+                signInBtnMouseClicked(evt);
             }
         });
+
+        jLabel3.setText(resourceMap.getString("jLabel3.text")); // NOI18N
+        jLabel3.setName("jLabel3"); // NOI18N
 
         javax.swing.GroupLayout mainPanelLayout = new javax.swing.GroupLayout(mainPanel);
         mainPanel.setLayout(mainPanelLayout);
         mainPanelLayout.setHorizontalGroup(
             mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, mainPanelLayout.createSequentialGroup()
-                .addContainerGap(76, Short.MAX_VALUE)
                 .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(logInBtn)
                     .addGroup(mainPanelLayout.createSequentialGroup()
-                        .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel2))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(passwordField, javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(loginField, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 140, Short.MAX_VALUE)
-                            .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
-                .addGap(94, 94, 94))
+                        .addContainerGap()
+                        .addComponent(signInBtn))
+                    .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                        .addGroup(mainPanelLayout.createSequentialGroup()
+                            .addContainerGap()
+                            .addComponent(jLabel3))
+                        .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addGroup(mainPanelLayout.createSequentialGroup()
+                                .addContainerGap()
+                                .addComponent(logInBtn))
+                            .addGroup(mainPanelLayout.createSequentialGroup()
+                                .addContainerGap(76, Short.MAX_VALUE)
+                                .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jLabel2))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addComponent(passwordField, javax.swing.GroupLayout.DEFAULT_SIZE, 177, Short.MAX_VALUE)
+                                    .addComponent(loginField, javax.swing.GroupLayout.DEFAULT_SIZE, 177, Short.MAX_VALUE))))))
+                .addGap(96, 96, 96))
         );
         mainPanelLayout.setVerticalGroup(
             mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -211,11 +225,13 @@ public class KomunikatorView extends FrameView {
                 .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(passwordField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel2))
-                .addGap(11, 11, 11)
-                .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 14, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(logInBtn)
-                .addContainerGap(58, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel3)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(signInBtn)
+                .addContainerGap(39, Short.MAX_VALUE))
         );
 
         logInBtn.getAccessibleContext().setAccessibleName(resourceMap.getString("LogIn.AccessibleContext.accessibleName")); // NOI18N
@@ -296,15 +312,6 @@ public class KomunikatorView extends FrameView {
         setStatusBar(statusPanel);
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jLabel3MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel3MouseClicked
-      if (newUserVar == null) {
-        JFrame mainFrame = KomunikatorApp.getApplication().getMainFrame();
-        newUserVar = new newUser(mainFrame, true);
-        newUserVar.setLocationRelativeTo(mainFrame);
-      }
-      KomunikatorApp.getApplication().show(newUserVar);
-    }//GEN-LAST:event_jLabel3MouseClicked
-
     private void logInBtnMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_logInBtnMouseClicked
       String login, password = null;
       login = loginField.getText();
@@ -327,6 +334,16 @@ public class KomunikatorView extends FrameView {
       }
 
     }//GEN-LAST:event_logInBtnMouseClicked
+
+    private void signInBtnMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_signInBtnMouseClicked
+        if (newUserVar == null) {
+            JFrame mainFrame = KomunikatorApp.getApplication().getMainFrame();
+            newUserVar = new newUser(mainFrame, true);
+            newUserVar.setLocationRelativeTo(mainFrame);
+        }
+        KomunikatorApp.getApplication().show(newUserVar);
+    }//GEN-LAST:event_signInBtnMouseClicked
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
@@ -337,6 +354,7 @@ public class KomunikatorView extends FrameView {
     private javax.swing.JMenuBar menuBar;
     private javax.swing.JPasswordField passwordField;
     private javax.swing.JProgressBar progressBar;
+    private javax.swing.JButton signInBtn;
     private javax.swing.JLabel statusAnimationLabel;
     private javax.swing.JLabel statusMessageLabel;
     private javax.swing.JPanel statusPanel;

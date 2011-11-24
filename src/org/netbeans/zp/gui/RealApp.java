@@ -31,25 +31,26 @@ import org.netbeans.zp.client.XMPPClient;
 public class RealApp extends javax.swing.JDialog implements Runnable {
     private String nickname;
     private ArrayList<String> buddies;
-    private ArrayList<String> selectedItems;
-    private DefaultListModel items = new DefaultListModel();
-    int selectedItemsNumber = 0;
-    private ListSelectionListener ll = new ListSelectionListener(){
+    private ArrayList<String> rooms;
+    private ArrayList<String> selectedFriends;
+    private ArrayList<String> selectedRooms;
+    private DefaultListModel friendsItems = new DefaultListModel();
+    private DefaultListModel roomsItems = new DefaultListModel();
+    private int selectedFriendsNumber = 0;
+    private int selectedRoomsNumber = 0;
+    private ListSelectionListener fl = new ListSelectionListener(){
         public void valueChanged(ListSelectionEvent e){
             if (e.getValueIsAdjusting())
                 return;
-            selectedItemsNumber = jList1.getSelectedValues().length;
-            if ( selectedItemsNumber == 1){
-                //rozpocznij rozmowę
-                selectedItems = new ArrayList<String>();
-                selectedItems.add(jList1.getSelectedValue().toString());
+            selectedFriendsNumber = friendsList.getSelectedValues().length;
+            if ( selectedFriendsNumber == 1){
+                selectedFriends = new ArrayList<String>();
+                selectedFriends.add(friendsList.getSelectedValue().toString());
             }
             else{
-                //rozpocznij konferencję
-                //dodać do konstruktora RealApp pobieranie loginu!!
-                selectedItems = new ArrayList<String>();
-                for (Object item : jList1.getSelectedValues())
-                    selectedItems.add(item.toString());
+                selectedFriends = new ArrayList<String>();
+                for (Object item : friendsList.getSelectedValues())
+                    selectedFriends.add(item.toString());
             }
         }
     };
@@ -67,20 +68,25 @@ public class RealApp extends javax.swing.JDialog implements Runnable {
     }
     
     public void fillBuddiesList(){
-        jList1 = new JList(items);
+        friendsList = new JList(friendsItems);
         for (int i = 0; i < buddies.size(); i++){
-            items.addElement(buddies.get(i));
+            friendsItems.addElement(buddies.get(i));
         }
     }
     
     @Action
     public void showAddContactBox(){
         if (addContactBox == null){
-            addContactBox = new AddContact(KomunikatorApp.getApplication().getMainFrame(), true, items);
+            addContactBox = new AddContact(KomunikatorApp.getApplication().getMainFrame(), true, friendsItems);
             addContactBox.setTitle("Dodaj znajomego");
             addContactBox.setLocationRelativeTo(this);
             addContactBox.setVisible(true);
             addContactBox.setEnabled(true);
+        }
+        else{
+            addContactBox.dispose();
+            addContactBox = null;
+            showAddContactBox();
         }
     }
     
@@ -92,6 +98,11 @@ public class RealApp extends javax.swing.JDialog implements Runnable {
             startChatBox.setLocationRelativeTo(this);
             startChatBox.setVisible(true);
             startChatBox.setEnabled(true);
+        }
+        else{
+            startChatBox.dispose();
+            startChatBox = null;
+            showStartChatBox();
         }
     }
     
@@ -116,14 +127,21 @@ public class RealApp extends javax.swing.JDialog implements Runnable {
         jPopupMenu1 = new javax.swing.JPopupMenu();
         canvas1 = new java.awt.Canvas();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jList1 = new javax.swing.JList();
+        friendsList = new javax.swing.JList();
         jComboBox1 = new javax.swing.JComboBox();
         logoutButton = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
+        createBtn = new javax.swing.JButton();
+        sendPMBtn = new javax.swing.JButton();
+        joinBtn = new javax.swing.JButton();
+        jLabel3 = new javax.swing.JLabel();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         javax.swing.JMenuItem addContact = new javax.swing.JMenuItem();
         startChat = new javax.swing.JMenuItem();
+        jSeparator2 = new javax.swing.JPopupMenu.Separator();
+        editUser = new javax.swing.JMenuItem();
+        removeUser = new javax.swing.JMenuItem();
         jSeparator1 = new javax.swing.JSeparator();
         closeChat = new javax.swing.JMenuItem();
         jMenu2 = new javax.swing.JMenu();
@@ -138,7 +156,7 @@ public class RealApp extends javax.swing.JDialog implements Runnable {
         menuBar1.add(menu2);
 
         jPopupMenu1.setName("jPopupMenu1"); // NOI18N
-        jPopupMenu1.getAccessibleContext().setAccessibleParent(jList1);
+        jPopupMenu1.getAccessibleContext().setAccessibleParent(friendsList);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle(resourceMap.getString("Form.title")); // NOI18N
@@ -154,14 +172,19 @@ public class RealApp extends javax.swing.JDialog implements Runnable {
 
         jScrollPane1.setName("jScrollPane1"); // NOI18N
 
-        jList1.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
-        jList1.setName("jList1"); // NOI18N
-        jList1.addMouseListener(new java.awt.event.MouseAdapter() {
+        friendsList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        friendsList.setName("friendsList"); // NOI18N
+        friendsList.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jList1MouseClicked(evt);
+                friendsListMouseClicked(evt);
             }
         });
-        jScrollPane1.setViewportView(jList1);
+        friendsList.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
+            public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
+                friendsListValueChanged(evt);
+            }
+        });
+        jScrollPane1.setViewportView(friendsList);
 
         jComboBox1.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Online", "Offline" }));
         jComboBox1.setName("jComboBox1"); // NOI18N
@@ -176,6 +199,33 @@ public class RealApp extends javax.swing.JDialog implements Runnable {
 
         jLabel1.setText(resourceMap.getString("jLabel1.text")); // NOI18N
         jLabel1.setName("jLabel1"); // NOI18N
+
+        createBtn.setText(resourceMap.getString("createBtn.text")); // NOI18N
+        createBtn.setName("createBtn"); // NOI18N
+        createBtn.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                createBtnMouseClicked(evt);
+            }
+        });
+
+        sendPMBtn.setText(resourceMap.getString("sendPMBtn.text")); // NOI18N
+        sendPMBtn.setName("sendPMBtn"); // NOI18N
+        sendPMBtn.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                sendPMBtnMouseClicked(evt);
+            }
+        });
+
+        joinBtn.setText(resourceMap.getString("joinBtn.text")); // NOI18N
+        joinBtn.setName("joinBtn"); // NOI18N
+        joinBtn.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                joinBtnMouseClicked(evt);
+            }
+        });
+
+        jLabel3.setText(resourceMap.getString("jLabel3.text")); // NOI18N
+        jLabel3.setName("jLabel3"); // NOI18N
 
         jMenuBar1.setName("jMenuBar1"); // NOI18N
 
@@ -195,6 +245,24 @@ public class RealApp extends javax.swing.JDialog implements Runnable {
         startChat.setText(resourceMap.getString("startChat.text")); // NOI18N
         startChat.setName("startChat"); // NOI18N
         jMenu1.add(startChat);
+
+        jSeparator2.setName("jSeparator2"); // NOI18N
+        jMenu1.add(jSeparator2);
+
+        editUser.setIcon(resourceMap.getIcon("editUser.icon")); // NOI18N
+        editUser.setText(resourceMap.getString("editUser.text")); // NOI18N
+        editUser.setName("editUser"); // NOI18N
+        jMenu1.add(editUser);
+
+        removeUser.setIcon(resourceMap.getIcon("removeUser.icon")); // NOI18N
+        removeUser.setText(resourceMap.getString("removeUser.text")); // NOI18N
+        removeUser.setName("removeUser"); // NOI18N
+        removeUser.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                removeUserActionPerformed(evt);
+            }
+        });
+        jMenu1.add(removeUser);
 
         jSeparator1.setName("jSeparator1"); // NOI18N
         jMenu1.add(jSeparator1);
@@ -231,32 +299,46 @@ public class RealApp extends javax.swing.JDialog implements Runnable {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(264, 264, 264)
-                        .addComponent(canvas1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(logoutButton)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                        .addGroup(layout.createSequentialGroup()
-                            .addComponent(jLabel1)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                            .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(71, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(createBtn, javax.swing.GroupLayout.DEFAULT_SIZE, 145, Short.MAX_VALUE)
+                            .addComponent(jLabel3)
+                            .addComponent(sendPMBtn, javax.swing.GroupLayout.DEFAULT_SIZE, 145, Short.MAX_VALUE)
+                            .addComponent(joinBtn, javax.swing.GroupLayout.DEFAULT_SIZE, 145, Short.MAX_VALUE)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLabel1)
+                                .addGap(10, 10, 10)
+                                .addComponent(jComboBox1, 0, 100, Short.MAX_VALUE))
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 145, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(canvas1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+            .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(canvas1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(logoutButton))
+                .addComponent(logoutButton)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(30, 30, 30)
+                        .addComponent(canvas1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jLabel3)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 202, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(sendPMBtn)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 186, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(createBtn)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 9, Short.MAX_VALUE)
+                .addComponent(joinBtn)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel1))
-                .addGap(27, 27, 27))
+                    .addComponent(jLabel1)
+                    .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
         );
 
         pack();
@@ -274,46 +356,96 @@ public class RealApp extends javax.swing.JDialog implements Runnable {
         // TODO add your handling code here:
         this.dispose();
         KomunikatorApp.getApplication().show(KomunikatorApp.getApplication().getMainFrame());
-
+        try {
+            XMPPClient.getInstance().connect();
+        } catch (XMPPException ex) {
+            Logger.getLogger(RealApp.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_formWindowClosing
 
-    private void jList1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jList1MouseClicked
+    private void friendsListMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_friendsListMouseClicked
         // TODO add your handling code here:
-        if ( evt.getButton() == evt.BUTTON2 ){
-            if (selectedItemsNumber == 0)
-                return;
-            else if (selectedItemsNumber == 1){
-                if (codeAndChatBox == null){
-                    codeAndChatBox = new CodeAndChat(KomunikatorApp.getApplication().getMainFrame(), 
-                            true, selectedItems.get(0), nickname);
-                    codeAndChatBox.setLocationRelativeTo(this);
-                    codeAndChatBox.setVisible(true);
-                }
-                else{
-                    codeAndChatBox.dispose();
-                    codeAndChatBox = null;
-                    jList1MouseClicked(evt);
-                }
+    }//GEN-LAST:event_friendsListMouseClicked
+
+    private void removeUserActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeUserActionPerformed
+        try {
+            // TODO add your handling code here:
+            XMPPClient.getInstance().removeUser();
+        } catch (XMPPException ex) {
+            Logger.getLogger(RealApp.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_removeUserActionPerformed
+
+    private void sendPMBtnMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_sendPMBtnMouseClicked
+        // TODO add your handling code here:
+        if (ChatDlg == null){
+            ChatDlg = new Chat(KomunikatorApp.getApplication().getMainFrame(), true, nickname, buddies.get(0));
+            ChatDlg.setTitle(buddies.get(0));
+            ChatDlg.setLocationRelativeTo(this);
+            ChatDlg.setEnabled(true);
+        }
+        else{
+            ChatDlg.dispose();
+            ChatDlg = null;
+            sendPMBtnMouseClicked(evt);
+        }
+    }//GEN-LAST:event_sendPMBtnMouseClicked
+
+    private void createBtnMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_createBtnMouseClicked
+        // TODO add your handling code here:
+        if (createCollaborationBox == null){
+            createCollaborationBox = new CreateCollaborationBox(KomunikatorApp.getApplication().getMainFrame(), 
+                    true, nickname);
+            createCollaborationBox.setTitle("Utwórz pokój współpracy nad kodem");
+            createCollaborationBox.setLocationRelativeTo(this);
+            createCollaborationBox.setVisible(true);
+            createCollaborationBox.setEnabled(true);
+        }
+        else{
+            createCollaborationBox.dispose();
+            createCollaborationBox = null;
+            createBtnMouseClicked(evt);
+        }
+    }//GEN-LAST:event_createBtnMouseClicked
+
+    private void joinBtnMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_joinBtnMouseClicked
+        // TODO add your handling code here:
+            if (joinCollaborationBox == null){
+                joinCollaborationBox = new JoinCollaborationBox(KomunikatorApp.getApplication().getMainFrame(),
+                        true, nickname);
+                joinCollaborationBox.setTitle("Dołącz do pokoju...");
+                joinCollaborationBox.setLocationRelativeTo(this);
+                joinCollaborationBox.setVisible(true);
+                joinCollaborationBox.setEnabled(true);
             }
             else{
-                if (codeAndConferenceBox == null){
-                    try {
-                        codeAndConferenceBox = new CodeAndConference(KomunikatorApp.getApplication().getMainFrame(), 
-                                true, selectedItems, nickname);
-                    } catch (XMPPException ex) {
-                        Logger.getLogger(RealApp.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                    codeAndConferenceBox.setLocationRelativeTo(this);
-                    codeAndConferenceBox.setVisible(true);
-                }
-                else{
-                    codeAndConferenceBox.dispose();
-                    codeAndConferenceBox = null;
-                    jList1MouseClicked(evt);
-                }
+                joinCollaborationBox.dispose();
+                joinCollaborationBox = null;
+                joinBtnMouseClicked(evt);
             }
+    }//GEN-LAST:event_joinBtnMouseClicked
+
+    private void friendsListValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_friendsListValueChanged
+        // TODO add your handling code here:
+        if (evt.getValueIsAdjusting())
+                return;
+        selectedFriendsNumber = friendsList.getSelectedValues().length;
+            
+        if (selectedFriendsNumber == 0){
+            sendPMBtn.setEnabled(false);           
         }
-    }//GEN-LAST:event_jList1MouseClicked
+        else if (selectedFriendsNumber == 1){
+            sendPMBtn.setEnabled(true);
+            selectedFriends = new ArrayList<String>();
+            selectedFriends.add(friendsList.getSelectedValue().toString());
+        }
+        else{
+            sendPMBtn.setEnabled(false);
+            selectedFriends = new ArrayList<String>();
+            for (Object item : friendsList.getSelectedValues())
+                selectedFriends.add(item.toString());
+        }
+    }//GEN-LAST:event_friendsListValueChanged
 
     /**
     * @param args the command line arguments
@@ -323,19 +455,26 @@ public class RealApp extends javax.swing.JDialog implements Runnable {
     private java.awt.Canvas canvas1;
     private javax.swing.JMenuItem clearArchives;
     private javax.swing.JMenuItem closeChat;
+    private javax.swing.JButton createBtn;
+    private javax.swing.JMenuItem editUser;
+    private javax.swing.JList friendsList;
     private javax.swing.JComboBox jComboBox1;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JList jList1;
+    private javax.swing.JLabel jLabel3;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenu jMenu2;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JPopupMenu jPopupMenu1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JSeparator jSeparator1;
+    private javax.swing.JPopupMenu.Separator jSeparator2;
+    private javax.swing.JButton joinBtn;
     private javax.swing.JButton logoutButton;
     private java.awt.Menu menu1;
     private java.awt.Menu menu2;
     private java.awt.MenuBar menuBar1;
+    private javax.swing.JMenuItem removeUser;
+    private javax.swing.JButton sendPMBtn;
     private javax.swing.JMenuItem showArchives;
     javax.swing.JMenuItem startChat;
     // End of variables declaration//GEN-END:variables
@@ -347,6 +486,8 @@ public class RealApp extends javax.swing.JDialog implements Runnable {
     private JDialog codeAndChatBox;
     private JDialog codeAndConferenceBox;
     private JDialog ChatDlg;
+    private JDialog createCollaborationBox;
+    private JDialog joinCollaborationBox;
 
     public void run() {
         //throw new UnsupportedOperationException("Not supported yet.");

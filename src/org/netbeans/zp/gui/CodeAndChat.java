@@ -86,10 +86,9 @@ public class CodeAndChat extends javax.swing.JDialog implements ClientMessageLis
     };
     
     /** Creates new form CodeAndChat */
-    public CodeAndChat(java.awt.Frame parent, boolean modal, String friend, String nickname) {
+    public CodeAndChat(java.awt.Frame parent, boolean modal, String nickname) {
         super(parent, modal);
         initComponents();
-        f = friend;
         n = nickname;
         XMPPClient.getInstance().addMessageListener(this);
     }

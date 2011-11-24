@@ -10,8 +10,12 @@
  */
 package org.netbeans.zp.gui;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.DefaultListModel;
 import org.jdesktop.application.Action;
+import org.jivesoftware.smack.XMPPException;
+import org.netbeans.zp.client.XMPPClient;
 
 /**
  *
@@ -41,6 +45,11 @@ public class AddContact extends javax.swing.JDialog implements Runnable {
     
     @Action
     public void addNewContact(){
+        try {
+            XMPPClient.getInstance().addBuddy(userIDField.getText());
+        } catch (XMPPException ex) {
+            Logger.getLogger(AddContact.class.getName()).log(Level.SEVERE, null, ex);
+        }
         items.addElement(this.userIDField.getText());
         dispose();
     }

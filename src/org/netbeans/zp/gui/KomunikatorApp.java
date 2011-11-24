@@ -19,11 +19,11 @@ public class KomunikatorApp extends SingleFrameApplication {
      * At startup create and show the main frame of the application.
      */
     @Override protected void startup() {
-        try {
+        //try {
             show(new KomunikatorView(this));
-        } catch (XMPPException ex) {
-            Logger.getLogger(KomunikatorApp.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        //} catch (XMPPException ex) {
+          //  Logger.getLogger(KomunikatorApp.class.getName()).log(Level.SEVERE, null, ex);
+        //}
     }
 
     /**

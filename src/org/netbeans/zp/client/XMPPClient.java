@@ -186,6 +186,17 @@ public class XMPPClient implements PacketListener {
     _connection.sendPacket(r);
     return r.getPacketID();
   }
+  
+  /*
+   * Dodaje nowego znajomego do listy zalogowanego uzytkownika
+   * @param buddyName login dodawanego znajomego
+   */
+  public void addBuddy(String buddyName) throws XMPPException{
+      
+      Roster roster = _connection.getRoster();
+      roster.createEntry(buddyName+SERVER_ADDRESS, buddyName, null);
+      
+  }
 
   /*
    * Zwraca liste znajomych *zalogowanego* uzytkownika
@@ -274,6 +285,7 @@ public class XMPPClient implements PacketListener {
     collaboration = new MultiUserChat(_connection, roomID);
     collaboration.create(owner);
     collaboration.sendConfigurationForm(new Form(Form.TYPE_SUBMIT));
+    collaboration.addParticipantListener(instance);
 
     return collaboration;
   }
@@ -286,10 +298,10 @@ public class XMPPClient implements PacketListener {
   public MultiUserChat joinCollaboration(String room, String nickname) throws XMPPException {
     MultiUserChat collaboration = new MultiUserChat(_connection, room);
     collaboration.join(nickname);
+    collaboration.addParticipantListener(instance);
     
     return collaboration;
   }
-  
   
   /**
    * Dodaj słuchacza wiadomosci z zaproszeniami
@@ -298,7 +310,6 @@ public class XMPPClient implements PacketListener {
   public void addInvitationListener(InvitationListener listener) {
     MultiUserChat.addInvitationListener(_connection, listener);
   }
-
 
   /*
    * Wysyla wiadomosc tekstowa do wszystkich w pokoju

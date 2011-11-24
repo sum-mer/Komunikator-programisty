@@ -31,7 +31,7 @@
                       <EmptySpace pref="336" max="32767" attributes="0"/>
                       <Component id="saveBtn" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <Component id="jTabbedPane1" pref="487" max="32767" attributes="0"/>
+                  <Component id="jTabbedPane1" max="32767" attributes="0"/>
               </Group>
               <EmptySpace type="separate" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
@@ -40,8 +40,8 @@
                       <EmptySpace pref="55" max="32767" attributes="0"/>
                       <Component id="sendBtn" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <Component id="jScrollPane4" alignment="1" pref="190" max="32767" attributes="0"/>
-                  <Component id="jScrollPane2" alignment="1" pref="190" max="32767" attributes="0"/>
+                  <Component id="jScrollPane4" alignment="1" pref="199" max="32767" attributes="0"/>
+                  <Component id="jScrollPane2" alignment="1" pref="199" max="32767" attributes="0"/>
               </Group>
               <EmptySpace type="separate" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="1" max="-2" attributes="0">

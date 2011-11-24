@@ -133,7 +133,7 @@ public class Chat extends javax.swing.JDialog implements ClientMessageListener, 
         String text = n+"\n"+jTextArea2.getText();
         jTextArea1.append(text);
         try {
-            XMPPClient.getInstance().sendChatMessage(text, to);
+            XMPPClient.getInstance().sendChatMessage(text, to+"@draugr.de");
         } catch (XMPPException ex) {
             Logger.getLogger(Chat.class.getName()).log(Level.SEVERE, null, ex);
         }

@@ -87,11 +87,9 @@ public class CodeAndConference extends javax.swing.JDialog implements ClientMess
 
   /** Creates new form CodeAndConference */
   public CodeAndConference(java.awt.Frame parent, boolean modal,
-          ArrayList<String> friends, String nickname) throws XMPPException {
+          String nickname) throws XMPPException {
     super(parent, modal);
     initComponents();
-
-    f = friends;
     n = nickname;
     collaboration = XMPPClient.getInstance().createCollaboration(n, n);
     XMPPClient.getInstance().addMessageListener(this);
@@ -320,7 +318,7 @@ public class CodeAndConference extends javax.swing.JDialog implements ClientMess
       // TODO add your handling code here:
       chatBox = new Chat(KomunikatorApp.getApplication().getMainFrame(), true,
               n, friendsList.getSelectedValue().toString());
-
+      chatBox.setTitle(friendsList.getSelectedValue().toString());
     }//GEN-LAST:event_sendPMMouseClicked
   /**
    * @param args the command line arguments

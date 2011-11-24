@@ -32,7 +32,7 @@ public class newUser extends javax.swing.JDialog implements RegistrationListener
   public newUser(java.awt.Frame parent, boolean modal) {
     super(parent, modal);
     initComponents();
-    getRootPane().setDefaultButton(jButton1);
+    getRootPane().setDefaultButton(signInBtn);
     XMPPClient.getInstance().setRegistrationListener(this);
     XMPPClient.getInstance().getInvitationMessage();
   }
@@ -46,13 +46,11 @@ public class newUser extends javax.swing.JDialog implements RegistrationListener
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jButton1 = new javax.swing.JButton();
+        signInBtn = new javax.swing.JButton();
         loginField = new javax.swing.JTextField();
-        jTextField2 = new javax.swing.JTextField();
         passwordField1 = new javax.swing.JPasswordField();
         passwordField2 = new javax.swing.JPasswordField();
         jLabel1 = new javax.swing.JLabel();
-        jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
 
@@ -62,19 +60,16 @@ public class newUser extends javax.swing.JDialog implements RegistrationListener
         setName("Form"); // NOI18N
         setResizable(false);
 
-        jButton1.setText(resourceMap.getString("jButton1.text")); // NOI18N
-        jButton1.setName("jButton1"); // NOI18N
-        jButton1.addMouseListener(new java.awt.event.MouseAdapter() {
+        signInBtn.setText(resourceMap.getString("signInBtn.text")); // NOI18N
+        signInBtn.setName("signInBtn"); // NOI18N
+        signInBtn.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jButton1MouseClicked(evt);
+                signInBtnMouseClicked(evt);
             }
         });
 
         loginField.setText(resourceMap.getString("loginField.text")); // NOI18N
         loginField.setName("loginField"); // NOI18N
-
-        jTextField2.setText(resourceMap.getString("jTextField2.text")); // NOI18N
-        jTextField2.setName("jTextField2"); // NOI18N
 
         passwordField1.setText(resourceMap.getString("passwordField1.text")); // NOI18N
         passwordField1.setName("passwordField1"); // NOI18N
@@ -84,9 +79,6 @@ public class newUser extends javax.swing.JDialog implements RegistrationListener
 
         jLabel1.setText(resourceMap.getString("jLabel1.text")); // NOI18N
         jLabel1.setName("jLabel1"); // NOI18N
-
-        jLabel2.setText(resourceMap.getString("jLabel2.text")); // NOI18N
-        jLabel2.setName("jLabel2"); // NOI18N
 
         jLabel3.setText(resourceMap.getString("jLabel3.text")); // NOI18N
         jLabel3.setName("jLabel3"); // NOI18N
@@ -99,27 +91,22 @@ public class newUser extends javax.swing.JDialog implements RegistrationListener
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(153, 153, 153)
-                .addComponent(jButton1)
-                .addContainerGap(154, Short.MAX_VALUE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(122, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                        .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                            .addComponent(jLabel1)
-                            .addComponent(jLabel4))
-                        .addComponent(jLabel2))
-                    .addComponent(jLabel3))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addContainerGap(156, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(passwordField2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                        .addComponent(passwordField1, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(loginField, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addGap(56, 56, 56))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jLabel1)
+                            .addComponent(jLabel3)
+                            .addComponent(jLabel4))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(passwordField2, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(passwordField1, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(loginField, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(56, 56, 56))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(signInBtn)
+                        .addGap(167, 167, 167))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -128,60 +115,54 @@ public class newUser extends javax.swing.JDialog implements RegistrationListener
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(loginField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel1))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel2))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(passwordField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel3))
                 .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(passwordField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel4))
                 .addGap(18, 18, 18)
-                .addComponent(jButton1)
-                .addContainerGap(19, Short.MAX_VALUE))
+                .addComponent(signInBtn)
+                .addContainerGap(26, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton1MouseClicked
+    private void signInBtnMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_signInBtnMouseClicked
       
       String login = loginField.getText();
       String pass = String.valueOf( passwordField1.getPassword() );
       
-      attr.put("username", login);
-      attr.put("password", pass);
+      if (/*pass == String.valueOf( passwordField2.getPassword() ) && */login != null && pass != null){
       
-      System.out.println("'" + login + "' haslo: '" + pass + "'");
+          attr.put("username", login);
+          attr.put("password", pass);
 
-      if (login != null && pass != null) {
-        System.out.println("Rejestruję!");
-        try {
-          XMPPClient.getInstance().register(attr);
-        } catch (XMPPException ex) {
-          Logger.getLogger(newUser.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        //dispose();
-      } else {
+          System.out.println("'" + login + "' haslo: '" + pass + "'");
+          try {
+              XMPPClient.getInstance().register(attr);
+          } catch (XMPPException ex) {
+              Logger.getLogger(newUser.class.getName()).log(Level.SEVERE, null, ex);
+          }
+          //dispose();
+      } 
+      else {
         System.out.println("Hasła niezgodne!");
-        isEqual = true;
+        JOptionPane.showMessageDialog( this, "Nie wszystkie pola zostały wypełnione");
         //jButton1MouseClicked(evt);
       }
-    }//GEN-LAST:event_jButton1MouseClicked
+    }//GEN-LAST:event_signInBtnMouseClicked
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
-    private javax.swing.JTextField jTextField2;
     private javax.swing.JTextField loginField;
     private javax.swing.JPasswordField passwordField1;
     private javax.swing.JPasswordField passwordField2;
+    private javax.swing.JButton signInBtn;
     // End of variables declaration//GEN-END:variables
 
   @Override
@@ -203,6 +184,7 @@ public class newUser extends javax.swing.JDialog implements RegistrationListener
   @Override
   public void error(Registration msg) {
     System.out.println("Błąd " + msg.getError().getCode() + " type: " + msg.getError().getType().toString() + "msg: " + msg.getError().getMessage());
+    JOptionPane.showMessageDialog( this ,"Rejestracja nie powiodła się.");
     XMPPClient.getInstance().getInvitationMessage();
   }
 
