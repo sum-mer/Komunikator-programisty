@@ -31,6 +31,7 @@ import org.netbeans.zp.message.NewSourceAddedMessage;
 import org.netbeans.zp.message.SelectionMadeMessage;
 import org.netbeans.zp.message.SourceCodeInsertedMessage;
 import org.netbeans.zp.message.SourceCodeRemovedMessage;
+import jsyntaxpane.DefaultSyntaxKit;
 
 /**
  *
@@ -275,6 +276,8 @@ public class CodeAndConference extends javax.swing.JDialog implements ClientMess
           Logger.getLogger(CodeAndConference.class.getName()).log(Level.SEVERE, null, ex);
         }
         if (filesNumber == 1) {
+          DefaultSyntaxKit.initKit();
+          editorArea1.setContentType("text/java");  
           editorArea1.setText(s);
           jTabbedPane1.getTabComponentAt(0).setName(fileName);
           editorArea1.setName(fileName);
