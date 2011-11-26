@@ -121,13 +121,12 @@ public class CreateCollaborationBox extends javax.swing.JDialog implements Runna
             else{*/
                 if (codeAndConferenceBox == null){
                     try {
-                        XMPPClient.getInstance().createCollaboration(roomNameField.getText(), n);
-                        codeAndConferenceBox = new CodeAndConference(KomunikatorApp.getApplication().getMainFrame(), true, n);
-                        
+                      //  XMPPClient.getInstance().createCollaboration(roomNameField.getText(), n);
+                        codeAndConferenceBox = new CodeAndConference(KomunikatorApp.getApplication().getMainFrame(), true, n, roomNameField.getText(), false); 
                     } catch (XMPPException ex) {
                         Logger.getLogger(CreateCollaborationBox.class.getName()).log(Level.SEVERE, null, ex);
                     }
-                    codeAndConferenceBox.setTitle(roomNameField.getText());
+                    codeAndConferenceBox.setTitle(roomNameField.getText() + "@conference.draugr.de | " + n);
                     codeAndConferenceBox.setLocationRelativeTo(this.getParent());
                     codeAndConferenceBox.setVisible(true);
                 }

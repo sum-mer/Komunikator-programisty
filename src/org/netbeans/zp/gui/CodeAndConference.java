@@ -88,11 +88,17 @@ public class CodeAndConference extends javax.swing.JDialog implements ClientMess
 
   /** Creates new form CodeAndConference */
   public CodeAndConference(java.awt.Frame parent, boolean modal,
-          String nickname) throws XMPPException {
+          String nickname, String roomName, boolean joinRoom) throws XMPPException {
     super(parent, modal);
     initComponents();
+    editorsList = new ArrayList();
     n = nickname;
-    collaboration = XMPPClient.getInstance().createCollaboration(n, n);
+    if ( joinRoom ) { 
+        collaboration = XMPPClient.getInstance().joinCollaboration(roomName, n);
+    } else {
+        collaboration = XMPPClient.getInstance().createCollaboration(roomName, n);
+    }
+        
     XMPPClient.getInstance().addMessageListener(this);
   }
 
@@ -279,7 +285,7 @@ public class CodeAndConference extends javax.swing.JDialog implements ClientMess
           DefaultSyntaxKit.initKit();
           editorArea1.setContentType("text/java");  
           editorArea1.setText(s);
-          jTabbedPane1.getTabComponentAt(0).setName(fileName);
+          jTabbedPane1.setTitleAt(0, fileName);
           editorArea1.setName(fileName);
           editorArea1.addInputMethodListener(imlNS);
           editorsList.add(editorArea1);
@@ -343,6 +349,7 @@ public class CodeAndConference extends javax.swing.JDialog implements ClientMess
     private javax.swing.JButton sendPM;
     // End of variables declaration//GEN-END:variables
 
+    @Override
   public void handle(Message message) {
     if (message.getType() == MessageType.CursorPositioned) {
       CursorPositionedMessage msg = (CursorPositionedMessage) message;

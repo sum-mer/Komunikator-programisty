@@ -279,7 +279,7 @@ public class XMPPClient implements PacketListener {
    */
   public MultiUserChat createCollaboration(String room, String owner) throws XMPPException {
     MultiUserChat collaboration = null;
-    
+
     String roomID = String.format("%s@%s", room, SERVER_CONFERENCE_ADDRESS);
 
     collaboration = new MultiUserChat(_connection, roomID);

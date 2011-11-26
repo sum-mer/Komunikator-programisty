@@ -119,11 +119,12 @@ public class JoinCollaborationBox extends javax.swing.JDialog implements Runnabl
             else{*/
                 if (codeAndConferenceBox == null){
                     try {
-                        XMPPClient.getInstance().joinCollaboration(roomNameField.getText(), n);
-                        codeAndConferenceBox = new CodeAndConference(KomunikatorApp.getApplication().getMainFrame(), true, n);
+                     //   XMPPClient.getInstance().joinCollaboration(roomNameField.getText(), n);
+                        codeAndConferenceBox = new CodeAndConference(KomunikatorApp.getApplication().getMainFrame(), true, n, roomNameField.getText(), true);
                     } catch (XMPPException ex) {
                         Logger.getLogger(JoinCollaborationBox.class.getName()).log(Level.SEVERE, null, ex);
                     }
+                    codeAndConferenceBox.setTitle(roomNameField.getText() + " | " + n);
                     codeAndConferenceBox.setLocationRelativeTo(this.getParent());
                     codeAndConferenceBox.setVisible(true);
                 }
