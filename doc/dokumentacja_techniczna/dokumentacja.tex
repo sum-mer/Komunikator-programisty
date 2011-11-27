@@ -59,7 +59,7 @@ backgroundcolor=\color{light-gray}
 
 \author{Olga Zachariasz,\\Aleksander Sobol,\\Bartłomiej Bułat,\\Bartłomiej Hyży,\\Julian Król,\\Łukasz Krzyżek,\\Maciej Gąsiorski,\\Tomasz Szczęśniak\\\\Informatyka Stosowana, IV rok\\WEAIiE, AGH}
 \date{30.11.2011}
-\title{Zarządzanie~projektami - komunikator programistów\\Dokumentacja techniczna}
+\title{Zarządzanie~projektami - Komunikator programistów\\Dokumentacja techniczna}
 \maketitle
 
 \begin{spacing}{0.8}
@@ -78,7 +78,7 @@ Celem projektu było przygotowanie narzędzia wspierającego zdalną pracę prog
 
 Zadaniem naszej grupy było przygotowanie specyficznego komunikatora internetowego - przeznaczonego dla programistów. Poza typową funkcjonalnością wymiany komunikatów tekstowych, jako wymaganie postawiona została możliwość wymiany plików źródłowych, nad którymi potem przeprowadzana miała być wspólna edycja - zaznaczanie fragmentów kodu i modyfikacja istniejącego kodu. Dodatkowo komunikacja miała przebiegać pomiędzy wieloma programistami na raz, na wzór rozmów konferencyjnych znanych ze standardowych komunikatorów.
 
-Początkowo dodatkowymi wymaganiami była implementacja rozmów głosowych oraz możliwość połączeń peer-to-peer, ostatecznie jednak wynegcjowano porzucenie tych wymagań z uwagi na dużą złożoność implementacyjną.
+Początkowo dodatkowymi wymaganiami była implementacja rozmów głosowych oraz możliwość połączeń peer-to-peer, ostatecznie jednak wynegocjowano porzucenie tych wymagań z uwagi na dużą złożoność implementacyjną.
 
 Aplikacja miała działać na zasadzie klient-serwer oraz wspierać dwa systemy operacyjne: Microsoft Windows (XP, 7) oraz Linux (osobna paczka dla dystrybucji Debian).
 
@@ -88,7 +88,7 @@ Aplikacja miała działać na zasadzie klient-serwer oraz wspierać dwa systemy 
 \section{Wybór technologii}
 
 % java, smack, xmpp, jabber, istniejace serwery, itp
-Jako że pozostawiono wolną rękę co do wyboru technologii, w których wykonany miał być komunikator, zespół zdecydował się na wybór bibliotek i środowisk dobrze mu znanych:
+Jako, że pozostawiono wolną rękę co do wyboru technologii, w których wykonany miał być komunikator, zespół zdecydował się na wybór bibliotek i środowisk dobrze mu znanych:
 \begin{itemize}
 \item Język programowania - Java
 \item IDE - NetBeans
@@ -102,16 +102,16 @@ Jako że pozostawiono wolną rękę co do wyboru technologii, w których wykonan
 % klient nasz, serwer dowolny wlasciwie, rysunek
 Na wybór protokołu XMPP do komunikacji pomiędzy programistami zdecydowano się głównie ze względu na jego otwartość, przystosowanie do rozszerzalności (np. o metadane informujące o edycji kodu) oraz użycie w wielu aplikacjach o podobnych możliwościach, służących do wspierania pracy grupowej zespołu programistów. Istotna okazała się również możliwość użycia istniejącej infrastruktury serwerów XMPP (dawniej Jabber), dzięki czemu wyeliminowana została konieczność implementacji programu serwera oraz dodatkowo zwiększona została niezawodność aplikacji, poprzez możliwość użycia do komunikacji dowolnego innego serwera w przypadku awarii aktualnie używanego.
 
-Do komunikacji pomiędzy rozproszonymi klientami wybrany został serwer XMPP \emph{draugr.de}, gdyż umożliwia on niezbądne w implementowanej aplikacji rozmowy grupowe (ang. MUC - Multi User Chat) oraz rejestrację nowych kont użytkowników bezpośrednio w aplikacji, bez konieczności odwiedzania jego strony internetowej. Poglądowy schemat architektury systemu przedstawia rysunek \ref{fig:architektura}.
+Do komunikacji pomiędzy rozproszonymi klientami wybrany został serwer XMPP \emph{draugr.de}, gdyż umożliwia on niezbędne w implementowanej aplikacji rozmowy grupowe (ang. MUC - Multi User Chat) oraz rejestrację nowych kont użytkowników bezpośrednio w aplikacji, bez konieczności odwiedzania jego strony internetowej. Poglądowy schemat architektury systemu przedstawia rysunek \ref{fig:architektura}.
 
 \begin{figure}[!htb]
   \begin{center}
     \includegraphics[width=1.0\textwidth]{img/architektura.png}
-    \caption{Architektura klient-serwer komunikatora programistów} \label{fig:architektura} 
+    \caption{Architektura klient-serwer Komunikatora programistów} \label{fig:architektura} 
   \end{center}
 \end{figure}
 
-W aplikacji możliwe jest tworzenie nowych kont użytkowników tylko na serwerze \emph{draugr.de}, jednak możliwe jest użycie istniejącego konta z dowolnego innego serwera. Komunikacja użytkowników posiadających konta na tym samym serwerze odbywa się za pośrednictwem tego serwera. W przypadku gdy komunikacja następuje pomiędzy kontami na różnych serwerach, klient komunikatora wciąż wysyła swoje pakiety na swój serwer, zaś dopiero ten serwer przesyła go na serwer odbiorcy pakietu. Na rys. \ref{fig:architektura} liniami przerywanymi przedstawiono połączenia pomiędzy różnymi serwerami XMPP, nadzorującymi komunikację pomiędzy rozproszonymi po różnych serwerach klientami.
+W aplikacji możliwe jest tworzenie nowych kont użytkowników tylko na serwerze \emph{draugr.de}, jednak możliwe jest użycie istniejącego konta z dowolnego innego serwera. Komunikacja użytkowników posiadających konta na tym samym serwerze odbywa się za pośrednictwem tego serwera. W przypadku, gdy komunikacja następuje pomiędzy kontami na różnych serwerach, klient komunikatora wciąż wysyła swoje pakiety na swój serwer, zaś dopiero ten serwer przesyła go na serwer odbiorcy pakietu. Na rys. \ref{fig:architektura} liniami przerywanymi przedstawiono połączenia pomiędzy różnymi serwerami XMPP, nadzorującymi komunikację pomiędzy rozproszonymi po różnych serwerach klientami.
 
 % \section{Podział na moduły}
 
@@ -121,7 +121,7 @@ W aplikacji możliwe jest tworzenie nowych kont użytkowników tylko na serwerze
 \section{Klient XMPP}
 
 % opis co to jest, ze opakowanie smack api, itp
-Klient XMPP zaimplementowany został w postaci klasy \emph{XMPPClient}, której diagram przedstawiony jest na rys. \ref{fig:uml_class_client}. Klasa to korzysta bezpośrednio z biblioteki Smack API, stanowiącej niskopoziomową warstwę sieciową komunikatora. \emph{XMPPClient} implementuje wysokopoziome funkcjonalności pozwalające na wygodną abstrację pozostałej części aplikacji (graficznego interfejsu użytkownika) od szczegółów implementacyjnych komunikacji.
+Klient XMPP zaimplementowany został w postaci klasy \emph{XMPPClient}, której diagram przedstawiony jest na rys. \ref{fig:uml_class_client}. Klasa ta korzysta bezpośrednio z biblioteki Smack API, stanowiącej niskopoziomową warstwę sieciową komunikatora. \emph{XMPPClient} implementuje wysokopoziome funkcjonalności pozwalające na wygodną abstrakcję pozostałej części aplikacji (graficznego interfejsu użytkownika) od szczegółów implementacyjnych komunikacji.
 % schematy UML klas: XMPPClient, listener wiadomosci, itp.
 \begin{figure}[!htb]
   \begin{center}
@@ -132,14 +132,14 @@ Klient XMPP zaimplementowany został w postaci klasy \emph{XMPPClient}, której 
 
 Z punktu widzenia komunikatora najbardziej istotne są następujące funkcje:
 \begin{items}
-\item \emph{connect()}, \emph{disconnect()} - połączenie/rozłączanie się z serwerem
-\item \emph{isConnected()} - sprawdzenie czy próba połączenia zakończyła się sukcesem
-\item \emph{login()} - zalogowanie się na serwer XMPP jako istniejący użytkownik
-\item \emph{register()} - zarejstrowanie nowego konta użytkownika na serwerze
+\item \emph{connect()}, \emph{disconnect()} - połączenie/rozłączanie się z serwerem,
+\item \emph{isConnected()} - sprawdzenie czy próba połączenia zakończyła się sukcesem,
+\item \emph{login()} - zalogowanie się na serwer XMPP jako istniejący użytkownik,
+\item \emph{register()} - zarejestrowanie nowego konta użytkownika na serwerze,
 \item \emph{addMessageListener()}, \emph{removeMessageListener()} - dodawanie i usuwanie nasłuchiwaczy wiadomości, patrz podrozdział \ref{sec:komunikacja}
-\item \emph{processPacket()} - obsługa odbieranych pakietów, zawierających różnego rodzaju wiadomości
-\item \emph{createCollaboration()}, \emph{joinCollaboration()} - tworzenie nowych i dołączanie do istniejących kolaboracji
-\item \emph{sendChatMessage()}, \emph{sendCodeMessage()} - wysyłanie wiadomości tekstowych i wiadomości informujących o modyfikacji kodu źródłowego
+\item \emph{processPacket()} - obsługa odbieranych pakietów, zawierających różnego rodzaju wiadomości,
+\item \emph{createCollaboration()}, \emph{joinCollaboration()} - tworzenie nowych i dołączanie do istniejących kolaboracji,
+\item \emph{sendChatMessage()}, \emph{sendCodeMessage()} - wysyłanie wiadomości tekstowych i wiadomości informujących o modyfikacji kodu źródłowego.
 \end{items}
 
 \clearpage
