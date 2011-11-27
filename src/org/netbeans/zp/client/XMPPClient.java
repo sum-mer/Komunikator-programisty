@@ -283,9 +283,10 @@ public class XMPPClient implements PacketListener {
     String roomID = String.format("%s@%s", room, SERVER_CONFERENCE_ADDRESS);
 
     collaboration = new MultiUserChat(_connection, roomID);
+	collaboration.addParticipantListener(this);
+	collaboration.addMessageListener(this);
     collaboration.create(owner);
     collaboration.sendConfigurationForm(new Form(Form.TYPE_SUBMIT));
-    collaboration.addParticipantListener(instance);
 
     return collaboration;
   }
@@ -297,8 +298,10 @@ public class XMPPClient implements PacketListener {
    */
   public MultiUserChat joinCollaboration(String room, String nickname) throws XMPPException {
     MultiUserChat collaboration = new MultiUserChat(_connection, room);
+
+	collaboration.addParticipantListener(this);
+	collaboration.addMessageListener(this);
     collaboration.join(nickname);
-    collaboration.addParticipantListener(instance);
     
     return collaboration;
   }
@@ -335,6 +338,7 @@ public class XMPPClient implements PacketListener {
 
     org.jivesoftware.smack.packet.Message msg = new Message(to);
     msg.setProperty("metadata", privateMsg);
+	msg.setBody("0");
 
     _connection.sendPacket(msg);
   }
@@ -350,6 +354,7 @@ public class XMPPClient implements PacketListener {
     org.jivesoftware.smack.packet.Message msg = collaboration.createMessage();
     message.UserID = collaboration.getNickname();
     msg.setProperty("metadata", message);
+	msg.setBody("0");
     collaboration.sendMessage(msg);
   }
 
@@ -362,6 +367,7 @@ public class XMPPClient implements PacketListener {
   public void sendPrivateCodeMessage(org.netbeans.zp.message.Message message, String to) throws XMPPException {
     org.jivesoftware.smack.packet.Message msg = new Message(to);
     msg.setProperty("metadata", message);
+	msg.setBody("0");
     _connection.sendPacket(msg);
   }
 }
