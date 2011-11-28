@@ -45,12 +45,13 @@ public class AddContact extends javax.swing.JDialog implements Runnable {
     
     @Action
     public void addNewContact(){
+        System.out.println("'"+userIDField.getText()+"'");
         try {
             XMPPClient.getInstance().addBuddy(userIDField.getText());
         } catch (XMPPException ex) {
             Logger.getLogger(AddContact.class.getName()).log(Level.SEVERE, null, ex);
         }
-        items.addElement(this.userIDField.getText());
+        items.addElement(this.userIDField.getText()+"@draugr.de");
         dispose();
     }
     
@@ -77,6 +78,11 @@ public class AddContact extends javax.swing.JDialog implements Runnable {
         addButton.setAction(actionMap.get("addNewContact")); // NOI18N
         addButton.setText(resourceMap.getString("addButton.text")); // NOI18N
         addButton.setName("addButton"); // NOI18N
+        addButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                addButtonMouseClicked(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -104,6 +110,18 @@ public class AddContact extends javax.swing.JDialog implements Runnable {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void addButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_addButtonMouseClicked
+        // TODO add your handling code here:
+        System.out.println("'"+userIDField.getText()+"'");
+        try {
+            XMPPClient.getInstance().addBuddy(userIDField.getText());
+        } catch (XMPPException ex) {
+            Logger.getLogger(AddContact.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        items.addElement(this.userIDField.getText());
+        dispose();
+    }//GEN-LAST:event_addButtonMouseClicked
 
     /**
      * @param args the command line arguments

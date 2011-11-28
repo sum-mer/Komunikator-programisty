@@ -25,10 +25,12 @@ import org.netbeans.zp.client.XMPPClient;
 public class CreateCollaborationBox extends javax.swing.JDialog implements Runnable {
     private String n;
     private ArrayList<String> r;
+    private RealApp owner;
     /** Creates new form CreateCollaborationBox */
-    public CreateCollaborationBox(java.awt.Frame parent, boolean modal, String nickname) {
+    public CreateCollaborationBox(java.awt.Frame parent, boolean modal, RealApp owner, String nickname) {
         super(parent, modal);
         initComponents();
+        this.owner =owner;
         n = nickname;
     }
 
@@ -122,7 +124,7 @@ public class CreateCollaborationBox extends javax.swing.JDialog implements Runna
                 if (codeAndConferenceBox == null){
                     try {
                       //  XMPPClient.getInstance().createCollaboration(roomNameField.getText(), n);
-                        codeAndConferenceBox = new CodeAndConference(KomunikatorApp.getApplication().getMainFrame(), true, n, roomNameField.getText(), false); 
+                        codeAndConferenceBox = new CodeAndConference(KomunikatorApp.getApplication().getMainFrame(), true, owner, n, roomNameField.getText(), false); 
                     } catch (XMPPException ex) {
                         Logger.getLogger(CreateCollaborationBox.class.getName()).log(Level.SEVERE, null, ex);
                     }

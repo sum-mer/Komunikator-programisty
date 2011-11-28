@@ -28,7 +28,7 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" attributes="0">
                       <Component id="chooseFileBtn" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace pref="336" max="32767" attributes="0"/>
+                      <EmptySpace pref="337" max="32767" attributes="0"/>
                       <Component id="saveBtn" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <Component id="jTabbedPane1" max="32767" attributes="0"/>
@@ -37,18 +37,15 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="1" attributes="0">
                       <Component id="commentBtn" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace pref="55" max="32767" attributes="0"/>
+                      <EmptySpace pref="81" max="32767" attributes="0"/>
                       <Component id="sendBtn" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <Component id="jScrollPane4" alignment="1" pref="199" max="32767" attributes="0"/>
-                  <Component id="jScrollPane2" alignment="1" pref="199" max="32767" attributes="0"/>
+                  <Component id="jScrollPane4" alignment="1" pref="216" max="32767" attributes="0"/>
+                  <Component id="jScrollPane2" alignment="1" pref="216" max="32767" attributes="0"/>
               </Group>
-              <EmptySpace type="separate" max="-2" attributes="0"/>
-              <Group type="103" groupAlignment="1" max="-2" attributes="0">
-                  <Component id="sendPM" max="32767" attributes="1"/>
-                  <Component id="jScrollPane3" alignment="1" pref="81" max="32767" attributes="1"/>
-              </Group>
-              <EmptySpace max="-2" attributes="0"/>
+              <EmptySpace type="unrelated" max="-2" attributes="0"/>
+              <Component id="sendPM" min="-2" max="-2" attributes="1"/>
+              <EmptySpace min="-2" pref="18" max="-2" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -57,7 +54,6 @@
           <Group type="102" alignment="0" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="jScrollPane3" alignment="0" pref="365" max="32767" attributes="1"/>
                   <Group type="102" alignment="0" attributes="0">
                       <Component id="jScrollPane2" min="-2" pref="255" max="-2" attributes="1"/>
                       <EmptySpace type="separate" max="-2" attributes="0"/>
@@ -70,10 +66,10 @@
                   <Component id="sendBtn" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="saveBtn" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="chooseFileBtn" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="sendPM" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="commentBtn" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="sendPM" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
-              <EmptySpace min="-2" pref="11" max="-2" attributes="0"/>
+              <EmptySpace min="-2" pref="13" max="-2" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -94,26 +90,6 @@
             <Property name="columns" type="int" value="20"/>
             <Property name="rows" type="int" value="5"/>
             <Property name="name" type="java.lang.String" value="chatArea" noResource="true"/>
-          </Properties>
-        </Component>
-      </SubComponents>
-    </Container>
-    <Container class="javax.swing.JScrollPane" name="jScrollPane3">
-      <Properties>
-        <Property name="name" type="java.lang.String" value="jScrollPane3" noResource="true"/>
-      </Properties>
-      <AuxValues>
-        <AuxValue name="autoScrollPane" type="java.lang.Boolean" value="true"/>
-      </AuxValues>
-
-      <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
-      <SubComponents>
-        <Component class="javax.swing.JList" name="friendsList">
-          <Properties>
-            <Property name="model" type="javax.swing.ListModel" editor="org.netbeans.modules.form.editors2.ListModelEditor">
-              <StringArray count="0"/>
-            </Property>
-            <Property name="name" type="java.lang.String" value="friendsList" noResource="true"/>
           </Properties>
         </Component>
       </SubComponents>
@@ -152,9 +128,6 @@
         <Property name="text" type="java.lang.String" resourceKey="saveBtn.text"/>
         <Property name="name" type="java.lang.String" value="saveBtn" noResource="true"/>
       </Properties>
-      <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="saveBtnActionPerformed"/>
-      </Events>
     </Component>
     <Component class="javax.swing.JButton" name="chooseFileBtn">
       <Properties>
@@ -211,10 +184,6 @@
               <Properties>
                 <Property name="name" type="java.lang.String" value="editorArea1" noResource="true"/>
               </Properties>
-              <Events>
-                <EventHandler event="caretPositionChanged" listener="java.awt.event.InputMethodListener" parameters="java.awt.event.InputMethodEvent" handler="editorArea1CaretPositionChanged"/>
-                <EventHandler event="inputMethodTextChanged" listener="java.awt.event.InputMethodListener" parameters="java.awt.event.InputMethodEvent" handler="editorArea1InputMethodTextChanged"/>
-              </Events>
             </Component>
           </SubComponents>
         </Container>

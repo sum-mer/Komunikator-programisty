@@ -316,7 +316,12 @@ public class KomunikatorView extends FrameView {
       String login, password = null;
       login = loginField.getText();
       password = String.valueOf( passwordField.getPassword() );
+      
       try {
+        if ( login.isEmpty() || password.isEmpty() )  {
+          throw new RuntimeException("Musisz podać login i hasło.");
+        }
+        
         if( ! XMPPClient.getInstance().isConnected() ) {
           XMPPClient.getInstance().connect();
         }
@@ -331,6 +336,8 @@ public class KomunikatorView extends FrameView {
       } catch(XMPPException ex) {
         System.out.println(ex);
         JOptionPane.showMessageDialog( this.getComponent(), "Nie udało się zalogować");
+      } catch(RuntimeException ex) {
+        JOptionPane.showMessageDialog( this.getComponent(), ex.getMessage());
       }
 
     }//GEN-LAST:event_logInBtnMouseClicked

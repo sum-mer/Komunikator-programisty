@@ -14,6 +14,7 @@ import org.jivesoftware.smack.filter.PacketFilter;
 import org.jivesoftware.smack.packet.IQ.Type;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Packet;
+import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.packet.Registration;
 import org.jivesoftware.smackx.Form;
 import org.jivesoftware.smackx.GroupChatInvitation;
@@ -64,6 +65,11 @@ public class XMPPClient implements PacketListener {
    * Obiekt rejestrujący użytkownika
    */
   private RegistrationListener _registrationListener;
+  
+  /*
+   * Nasłuchiwacz zmiany statusu osób w pokoju
+   */
+  private PresenceListener _presenceListener;
 
   static {
     XMPPConnection.DEBUG_ENABLED = true; // wlacza/wylacza debugowanie XMPP
@@ -194,7 +200,11 @@ public class XMPPClient implements PacketListener {
   public void addBuddy(String buddyName) throws XMPPException{
       
       Roster roster = _connection.getRoster();
-      roster.createEntry(buddyName+SERVER_ADDRESS, buddyName, null);
+      if ( buddyName.contains("@") ) {
+        roster.createEntry(buddyName, buddyName, null);
+      }else {
+        roster.createEntry(buddyName+"@"+SERVER_ADDRESS, buddyName, null);
+      }
       
   }
 
@@ -260,7 +270,15 @@ public class XMPPClient implements PacketListener {
       } else if (r.getType() == Type.ERROR) {
         _registrationListener.error(r);
       }
-    } else {
+    } else if (packet instanceof Presence){
+        Presence p = (Presence) packet;
+        
+        if (p.getType() == Presence.Type.available){
+            _presenceListener.available(p);
+        } else if (p.getType() == Presence.Type.unavailable){
+            _presenceListener.unavailable(p);
+        }
+    }else {
       org.jivesoftware.smack.packet.Message message = (org.jivesoftware.smack.packet.Message) packet;
       if (message.getProperty("metadata") != null) {
         org.netbeans.zp.message.Message metadata = (org.netbeans.zp.message.Message) message.getProperty("metadata");

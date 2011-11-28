@@ -17,9 +17,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.DefaultListModel;
 import javax.swing.JDialog;
 import javax.swing.JEditorPane;
 import javax.swing.JFileChooser;
+import javax.swing.JList;
 import javax.swing.JScrollPane;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -37,6 +39,9 @@ import org.netbeans.zp.message.SelectionMadeMessage;
 import org.netbeans.zp.message.SourceCodeInsertedMessage;
 import org.netbeans.zp.message.SourceCodeRemovedMessage;
 import jsyntaxpane.DefaultSyntaxKit;
+import org.jivesoftware.smack.packet.Presence;
+import org.jivesoftware.smackx.muc.Affiliate;
+import org.jivesoftware.smackx.muc.Occupant;
 
 /**
  *
@@ -48,11 +53,17 @@ public class CodeAndConference extends javax.swing.JDialog implements ClientMess
   private ArrayList<String> f;
   private String n;
   private String roomID;
+  private RealApp owner;
   private ArrayList<JEditorPane> editorsList;
+  private ArrayList<Occupant> occupants;
+  private ArrayList<Affiliate> affiliates;
   private int filesNumber = 0;
   private boolean isSaved = false;
   private boolean hasName = false;
   private boolean action = false;
+  private JScrollPane friendsListScroll;
+  private JList friendsList;
+  private DefaultListModel listItems = new DefaultListModel();
   private String fileName;
   private String path;
   private File file;
@@ -143,10 +154,19 @@ public class CodeAndConference extends javax.swing.JDialog implements ClientMess
   };
 
   /** Creates new form CodeAndConference */
-  public CodeAndConference(java.awt.Frame parent, boolean modal,
+  public CodeAndConference(java.awt.Frame parent, boolean modal, RealApp owner,
           String nickname, String roomName, boolean joinRoom) throws XMPPException {
     super(parent, modal);
     initComponents();
+    this.owner = owner;
+    friendsListScroll = new JScrollPane();
+    friendsListScroll.setBounds(743, 12, 86, 365);
+    friendsList = new JList(listItems);
+    friendsList.setBounds(0, 0, 84, 363);
+    friendsList.setEnabled(true);
+    friendsList.setVisible(true);
+    friendsListScroll.setViewportView(friendsList);
+    add(friendsListScroll);
     editorsList = new ArrayList();
     n = nickname;
     if ( joinRoom ) { 
@@ -154,7 +174,18 @@ public class CodeAndConference extends javax.swing.JDialog implements ClientMess
     } else {
         collaboration = XMPPClient.getInstance().createCollaboration(roomName, n);
     }
+    //if (collaboration.getOwners().contains(n)){
+    //    fillFriendsList();
+    //}
+    
     XMPPClient.getInstance().addMessageListener(this);
+  }
+  
+  public void fillFriendsList() throws XMPPException{
+      affiliates = (ArrayList<Affiliate>) collaboration.getMembers();
+      for (int i=0; i < affiliates.size(); i++){
+          listItems.addElement(affiliates.get(i).getNick());
+      }
   }
 
   /** This method is called from within the constructor to
@@ -168,8 +199,6 @@ public class CodeAndConference extends javax.swing.JDialog implements ClientMess
 
         jScrollPane2 = new javax.swing.JScrollPane();
         chatArea = new javax.swing.JTextArea();
-        jScrollPane3 = new javax.swing.JScrollPane();
-        friendsList = new javax.swing.JList();
         jScrollPane4 = new javax.swing.JScrollPane();
         msgArea = new javax.swing.JTextArea();
         sendBtn = new javax.swing.JButton();
@@ -191,11 +220,6 @@ public class CodeAndConference extends javax.swing.JDialog implements ClientMess
         chatArea.setName("chatArea"); // NOI18N
         jScrollPane2.setViewportView(chatArea);
 
-        jScrollPane3.setName("jScrollPane3"); // NOI18N
-
-        friendsList.setName("friendsList"); // NOI18N
-        jScrollPane3.setViewportView(friendsList);
-
         jScrollPane4.setName("jScrollPane4"); // NOI18N
 
         msgArea.setColumns(20);
@@ -203,7 +227,7 @@ public class CodeAndConference extends javax.swing.JDialog implements ClientMess
         msgArea.setName("msgArea"); // NOI18N
         jScrollPane4.setViewportView(msgArea);
 
-        org.jdesktop.application.ResourceMap resourceMap = org.jdesktop.application.Application.getInstance().getContext().getResourceMap(CodeAndConference.class);
+        org.jdesktop.application.ResourceMap resourceMap = org.jdesktop.application.Application.getInstance(org.netbeans.zp.gui.KomunikatorApp.class).getContext().getResourceMap(CodeAndConference.class);
         sendBtn.setText(resourceMap.getString("sendBtn.text")); // NOI18N
         sendBtn.setName("sendBtn"); // NOI18N
         sendBtn.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -219,11 +243,6 @@ public class CodeAndConference extends javax.swing.JDialog implements ClientMess
 
         saveBtn.setText(resourceMap.getString("saveBtn.text")); // NOI18N
         saveBtn.setName("saveBtn"); // NOI18N
-        saveBtn.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                saveBtnActionPerformed(evt);
-            }
-        });
 
         chooseFileBtn.setText(resourceMap.getString("chooseFileBtn.text")); // NOI18N
         chooseFileBtn.setName("chooseFileBtn"); // NOI18N
@@ -254,14 +273,6 @@ public class CodeAndConference extends javax.swing.JDialog implements ClientMess
         jScrollPane1.setName("jScrollPane1"); // NOI18N
 
         editorArea1.setName("editorArea1"); // NOI18N
-        editorArea1.addInputMethodListener(new java.awt.event.InputMethodListener() {
-            public void caretPositionChanged(java.awt.event.InputMethodEvent evt) {
-                editorArea1CaretPositionChanged(evt);
-            }
-            public void inputMethodTextChanged(java.awt.event.InputMethodEvent evt) {
-                editorArea1InputMethodTextChanged(evt);
-            }
-        });
         jScrollPane1.setViewportView(editorArea1);
 
         jTabbedPane1.addTab(resourceMap.getString("jScrollPane1.TabConstraints.tabTitle"), jScrollPane1); // NOI18N
@@ -275,29 +286,26 @@ public class CodeAndConference extends javax.swing.JDialog implements ClientMess
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(chooseFileBtn)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 336, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 337, Short.MAX_VALUE)
                         .addComponent(saveBtn))
                     .addComponent(jTabbedPane1))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addComponent(commentBtn)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 55, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 56, Short.MAX_VALUE)
                         .addComponent(sendBtn))
-                    .addComponent(jScrollPane4, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 199, Short.MAX_VALUE)
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 199, Short.MAX_VALUE))
-                .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                    .addComponent(sendPM, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 81, Short.MAX_VALUE))
-                .addContainerGap())
+                    .addComponent(jScrollPane4, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 216, Short.MAX_VALUE)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 216, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(sendPM)
+                .addGap(18, 18, 18))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 365, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 255, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
@@ -308,9 +316,9 @@ public class CodeAndConference extends javax.swing.JDialog implements ClientMess
                     .addComponent(sendBtn)
                     .addComponent(saveBtn)
                     .addComponent(chooseFileBtn)
-                    .addComponent(sendPM)
-                    .addComponent(commentBtn))
-                .addGap(11, 11, 11))
+                    .addComponent(commentBtn)
+                    .addComponent(sendPM))
+                .addGap(13, 13, 13))
         );
 
         pack();
@@ -412,9 +420,17 @@ public class CodeAndConference extends javax.swing.JDialog implements ClientMess
 
     private void sendPMMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_sendPMMouseClicked
       // TODO add your handling code here:
-      chatBox = new Chat(KomunikatorApp.getApplication().getMainFrame(), true,
-              n, friendsList.getSelectedValue().toString());
-      chatBox.setTitle(friendsList.getSelectedValue().toString());
+        if (chatBox == null){
+            chatBox = new Chat(KomunikatorApp.getApplication().getMainFrame(), true, owner,
+                n, friendsList.getSelectedValue().toString());
+            chatBox.setTitle(friendsList.getSelectedValue().toString());
+            chatBox.setLocationRelativeTo(this);
+        }
+        else{
+            chatBox.dispose();
+            chatBox = null;
+            sendPMMouseClicked(evt);
+        }
     }//GEN-LAST:event_sendPMMouseClicked
 
 private void editorArea1InputMethodTextChanged(java.awt.event.InputMethodEvent evt) {//GEN-FIRST:event_editorArea1InputMethodTextChanged
@@ -466,10 +482,8 @@ private void saveBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST
     private javax.swing.JButton chooseFileBtn;
     private javax.swing.JButton commentBtn;
     private javax.swing.JEditorPane editorArea1;
-    private javax.swing.JList friendsList;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JTextArea msgArea;
@@ -565,4 +579,24 @@ private void saveBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST
   @Override
   public void run() {
   }
+  
+  public void available(Presence msg) {
+        System.out.println("DOSTĘPNY!");
+        try {
+            fillFriendsList();
+        } catch (XMPPException ex) {
+            Logger.getLogger(CodeAndConference.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        friendsList.repaint();
+    }
+
+    public void unavailable(Presence msg) {
+        System.out.println("NIEDOSTĘPNY!");
+        try {
+            fillFriendsList();
+        } catch (XMPPException ex) {
+            Logger.getLogger(CodeAndConference.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        friendsList.repaint();
+    }
 }

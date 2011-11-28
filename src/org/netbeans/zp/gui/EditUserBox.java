@@ -26,7 +26,7 @@ import org.netbeans.zp.client.XMPPClient;
 public class EditUserBox extends javax.swing.JDialog implements RegistrationListener, Runnable {
     private Map<String, String> attr = null;
     /** Creates new form EditUserBox */
-    public EditUserBox(java.awt.Frame parent, boolean modal, XMPPClient client) {
+    public EditUserBox(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
         XMPPClient.getInstance().setRegistrationListener(this);
