@@ -457,7 +457,6 @@ private void saveBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST
                 Logger.getLogger(CodeAndConference.class.getName()).log(Level.SEVERE, null, ex);
             }   
     }
-    
 }//GEN-LAST:event_saveBtnActionPerformed
   /**
    * @param args the command line arguments
