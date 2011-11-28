@@ -152,6 +152,9 @@
         <Property name="text" type="java.lang.String" resourceKey="saveBtn.text"/>
         <Property name="name" type="java.lang.String" value="saveBtn" noResource="true"/>
       </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="saveBtnActionPerformed"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JButton" name="chooseFileBtn">
       <Properties>
@@ -208,6 +211,10 @@
               <Properties>
                 <Property name="name" type="java.lang.String" value="editorArea1" noResource="true"/>
               </Properties>
+              <Events>
+                <EventHandler event="caretPositionChanged" listener="java.awt.event.InputMethodListener" parameters="java.awt.event.InputMethodEvent" handler="editorArea1CaretPositionChanged"/>
+                <EventHandler event="inputMethodTextChanged" listener="java.awt.event.InputMethodListener" parameters="java.awt.event.InputMethodEvent" handler="editorArea1InputMethodTextChanged"/>
+              </Events>
             </Component>
           </SubComponents>
         </Container>

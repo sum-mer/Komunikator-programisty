@@ -5,11 +5,13 @@
  */
 package org.netbeans.zp.gui;
 
+import java.awt.Color;
 import java.awt.event.InputMethodEvent;
 import java.awt.event.InputMethodListener;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -19,6 +21,9 @@ import javax.swing.JDialog;
 import javax.swing.JEditorPane;
 import javax.swing.JFileChooser;
 import javax.swing.JScrollPane;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.filechooser.FileSystemView;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smackx.muc.MultiUserChat;
 import org.netbeans.zp.client.ClientMessageListener;
@@ -47,11 +52,62 @@ public class CodeAndConference extends javax.swing.JDialog implements ClientMess
   private int filesNumber = 0;
   private boolean isSaved = false;
   private boolean hasName = false;
+  private boolean action = false;
   private String fileName;
   private String path;
   private File file;
   private JDialog chatBox;
   private JFileChooser fileToChoose;
+  private DocumentListener dlist = new DocumentListener() {
+            public void changedUpdate(DocumentEvent e) {
+            }
+            
+            public void removeUpdate(DocumentEvent e) {
+            }
+ 
+            public void insertUpdate(DocumentEvent e) {
+                if (path!=null && action==false) {
+                      editorArea1.setCaretColor(Color.red);
+                      SourceCodeInsertedMessage msg = new  SourceCodeInsertedMessage();
+                      msg.FileID = fileName;
+                      msg.InsertPosition = 0;
+                      for (JEditorPane item : editorsList) {
+                        if (item.getName() == null ? fileName == null : item.getName().equals(path+fileName)) {
+                         msg.InsertedCode = item.getText();
+                          break;
+                        }
+                      }
+                      msg.UserID = n;
+                      try {
+                        XMPPClient.getInstance().sendCodeMessage(collaboration, msg);
+                      } catch (XMPPException ex) {
+                        Logger.getLogger(CodeAndChat.class.getName()).log(Level.SEVERE, null, ex);
+                      }
+                  }  
+                  else if(action==false) {
+                      editorArea1.setCaretColor(Color.red);
+                      SourceCodeInsertedMessage msg = new  SourceCodeInsertedMessage();
+                      msg.FileID = fileName + "_d";
+                      msg.InsertPosition = 0;
+                      for (JEditorPane item : editorsList) {
+                        if (item.getName() == null ? fileName == null : item.getName().equals(fileName)) {
+                         msg.InsertedCode = item.getText();
+                          break;
+                        }
+                      }
+                      msg.UserID = n;
+                      try {
+                        XMPPClient.getInstance().sendCodeMessage(collaboration, msg);
+                      } catch (XMPPException ex) {
+                        Logger.getLogger(CodeAndChat.class.getName()).log(Level.SEVERE, null, ex);
+                      }
+                    }
+                    action=false;
+                    editorArea1.setCaretColor(Color.black);
+                }
+            };
+  
+  
   private InputMethodListener imlNS = new InputMethodListener() {
 
     public void inputMethodTextChanged(InputMethodEvent event) {
@@ -98,7 +154,6 @@ public class CodeAndConference extends javax.swing.JDialog implements ClientMess
     } else {
         collaboration = XMPPClient.getInstance().createCollaboration(roomName, n);
     }
-        
     XMPPClient.getInstance().addMessageListener(this);
   }
 
@@ -148,7 +203,7 @@ public class CodeAndConference extends javax.swing.JDialog implements ClientMess
         msgArea.setName("msgArea"); // NOI18N
         jScrollPane4.setViewportView(msgArea);
 
-        org.jdesktop.application.ResourceMap resourceMap = org.jdesktop.application.Application.getInstance(org.netbeans.zp.gui.KomunikatorApp.class).getContext().getResourceMap(CodeAndConference.class);
+        org.jdesktop.application.ResourceMap resourceMap = org.jdesktop.application.Application.getInstance().getContext().getResourceMap(CodeAndConference.class);
         sendBtn.setText(resourceMap.getString("sendBtn.text")); // NOI18N
         sendBtn.setName("sendBtn"); // NOI18N
         sendBtn.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -164,6 +219,11 @@ public class CodeAndConference extends javax.swing.JDialog implements ClientMess
 
         saveBtn.setText(resourceMap.getString("saveBtn.text")); // NOI18N
         saveBtn.setName("saveBtn"); // NOI18N
+        saveBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                saveBtnActionPerformed(evt);
+            }
+        });
 
         chooseFileBtn.setText(resourceMap.getString("chooseFileBtn.text")); // NOI18N
         chooseFileBtn.setName("chooseFileBtn"); // NOI18N
@@ -194,6 +254,14 @@ public class CodeAndConference extends javax.swing.JDialog implements ClientMess
         jScrollPane1.setName("jScrollPane1"); // NOI18N
 
         editorArea1.setName("editorArea1"); // NOI18N
+        editorArea1.addInputMethodListener(new java.awt.event.InputMethodListener() {
+            public void caretPositionChanged(java.awt.event.InputMethodEvent evt) {
+                editorArea1CaretPositionChanged(evt);
+            }
+            public void inputMethodTextChanged(java.awt.event.InputMethodEvent evt) {
+                editorArea1InputMethodTextChanged(evt);
+            }
+        });
         jScrollPane1.setViewportView(editorArea1);
 
         jTabbedPane1.addTab(resourceMap.getString("jScrollPane1.TabConstraints.tabTitle"), jScrollPane1); // NOI18N
@@ -207,17 +275,17 @@ public class CodeAndConference extends javax.swing.JDialog implements ClientMess
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(chooseFileBtn)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 335, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 336, Short.MAX_VALUE)
                         .addComponent(saveBtn))
-                    .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 487, Short.MAX_VALUE))
+                    .addComponent(jTabbedPane1))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addComponent(commentBtn)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 46, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 55, Short.MAX_VALUE)
                         .addComponent(sendBtn))
-                    .addComponent(jScrollPane4, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 190, Short.MAX_VALUE)
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 190, Short.MAX_VALUE))
+                    .addComponent(jScrollPane4, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 199, Short.MAX_VALUE)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 199, Short.MAX_VALUE))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                     .addComponent(sendPM, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -254,6 +322,8 @@ public class CodeAndConference extends javax.swing.JDialog implements ClientMess
 
     private void chooseFileBtnMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_chooseFileBtnMouseClicked
       // TODO add your handling code here:
+    //  editorArea1.addInputMethodListener(imlNS);
+      editorArea1.getDocument().addDocumentListener(dlist);
       if (fileToChoose == null) {
         fileToChoose = new JFileChooser();
         fileToChoose.showOpenDialog(this);
@@ -277,19 +347,36 @@ public class CodeAndConference extends javax.swing.JDialog implements ClientMess
           } catch (IOException ex) {
             Logger.getLogger(CodeAndConference.class.getName()).log(Level.SEVERE, null, ex);
           }
-
         } catch (FileNotFoundException ex) {
           Logger.getLogger(CodeAndConference.class.getName()).log(Level.SEVERE, null, ex);
         }
-        if (filesNumber == 1) {
+        if (filesNumber == 1) {    
           DefaultSyntaxKit.initKit();
           editorArea1.setContentType("text/java");  
           editorArea1.setText(s);
           jTabbedPane1.setTitleAt(0, fileName);
-          editorArea1.setName(fileName);
-          editorArea1.addInputMethodListener(imlNS);
+          editorArea1.setName(path+fileName);
           editorsList.add(editorArea1);
-        } else {
+          editorArea1.addInputMethodListener(imlNS);
+          editorArea1.getDocument().addDocumentListener(dlist);
+
+          NewSourceAddedMessage msg = new NewSourceAddedMessage();
+          msg.FileDirectory = path;
+          msg.FileName = fileName;
+
+          for (JEditorPane item : editorsList) {   
+                if (item.getName() == null ? fileName == null : item.getName().equals(path+fileName)) {
+                  msg.SourceCode = item.getText();
+                  break;
+                }
+              }
+          msg.UserID = n;
+          try {
+            XMPPClient.getInstance().sendCodeMessage(collaboration, msg);
+          } catch (XMPPException ex) {
+            Logger.getLogger(CodeAndChat.class.getName()).log(Level.SEVERE, null, ex);
+          }
+        } else { 
           JScrollPane jScrollPane = new JScrollPane();
           JEditorPane editorArea = new JEditorPane();
           editorArea.setText(s);
@@ -329,6 +416,49 @@ public class CodeAndConference extends javax.swing.JDialog implements ClientMess
               n, friendsList.getSelectedValue().toString());
       chatBox.setTitle(friendsList.getSelectedValue().toString());
     }//GEN-LAST:event_sendPMMouseClicked
+
+private void editorArea1InputMethodTextChanged(java.awt.event.InputMethodEvent evt) {//GEN-FIRST:event_editorArea1InputMethodTextChanged
+// TODO add your handling code here:
+    
+}//GEN-LAST:event_editorArea1InputMethodTextChanged
+
+private void editorArea1CaretPositionChanged(java.awt.event.InputMethodEvent evt) {//GEN-FIRST:event_editorArea1CaretPositionChanged
+// TODO add your handling code here:
+}//GEN-LAST:event_editorArea1CaretPositionChanged
+
+private void saveBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveBtnActionPerformed
+// TODO add your handling code here:
+    if (path!=null) {
+        String code = editorsList.get(jTabbedPane1.getSelectedIndex()).getText();
+        FileOutputStream fileOutput = null;
+            try {
+                fileOutput = new FileOutputStream(path);
+                byte [] buf = code.getBytes();
+                fileOutput.write( buf, 0, buf.length );
+                fileOutput.close();
+            } catch (FileNotFoundException ex) {
+                Logger.getLogger(CodeAndConference.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (IOException ex) {
+                Logger.getLogger(CodeAndConference.class.getName()).log(Level.SEVERE, null, ex);
+            }   
+    } else {
+        String code = editorsList.get(jTabbedPane1.getSelectedIndex()-1).getText();
+        JFileChooser fr = new JFileChooser();
+        FileSystemView fw = fr.getFileSystemView();
+        FileOutputStream fileOutput = null;
+            try {
+                fileOutput = new FileOutputStream(fw.getDefaultDirectory()+"\\"+editorsList.get(jTabbedPane1.getSelectedIndex()-1).getName());
+                byte [] buf = code.getBytes();
+                fileOutput.write( buf, 0, buf.length );
+                fileOutput.close();
+            } catch (FileNotFoundException ex) {
+                Logger.getLogger(CodeAndConference.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (IOException ex) {
+                Logger.getLogger(CodeAndConference.class.getName()).log(Level.SEVERE, null, ex);
+            }   
+    }
+    
+}//GEN-LAST:event_saveBtnActionPerformed
   /**
    * @param args the command line arguments
    */
@@ -351,56 +481,85 @@ public class CodeAndConference extends javax.swing.JDialog implements ClientMess
 
     @Override
   public void handle(Message message) {
-    if (message.getType() == MessageType.CursorPositioned) {
-      CursorPositionedMessage msg = (CursorPositionedMessage) message;
-      for (JEditorPane item : editorsList) {
-        if (item.getName() == null ? msg.FileID == null : item.getName().equals(msg.FileID)) {
-          item.setCaretPosition(msg.CursorPosition);
-          break;
+    if (!message.UserID.equals(n)) {
+        if (message.getType() == MessageType.CursorPositioned) {
+          CursorPositionedMessage msg = (CursorPositionedMessage) message;
+          for (JEditorPane item : editorsList) {
+            if (item.getName() == null ? msg.FileID == null : item.getName().equals(msg.FileID)) {
+              item.setCaretPosition(msg.CursorPosition);
+              break;
+            }
+          }
+        } else if (message.getType() == MessageType.GroupMessage) {
+          GroupMessage msg = (GroupMessage) message;
+          chatArea.append(msg.UserID + "\n" + msg.Body);
+        } else if (message.getType() == MessageType.NewSourceAdded) {
+         // DefaultSyntaxKit.initKit();
+          NewSourceAddedMessage msg = (NewSourceAddedMessage) message;
+          filesNumber++;
+          JScrollPane jScrollPane = new JScrollPane();
+          JEditorPane editorArea = new JEditorPane();
+          editorArea.setText(msg.SourceCode);
+
+          jScrollPane.setViewportView(editorArea);
+          jTabbedPane1.addTab(msg.FileName, jScrollPane);
+          jScrollPane.setName("jScrollPane" + filesNumber);
+          editorArea.setName(msg.FileName);
+          fileName = msg.FileName;
+          path = msg.FileDirectory;
+          this.path = null;
+          editorsList.add(editorArea);
+          //editorArea.addInputMethodListener(imlNS);
+          editorArea.getDocument().addDocumentListener(dlist);
+
+
+
+        } else if (message.getType() == MessageType.SelectionMade) {
+          SelectionMadeMessage msg = (SelectionMadeMessage) message;
+          for (JEditorPane item : editorsList) {
+            if (item.getName() == null ? msg.FileID == null : item.getName().equals(msg.FileID)) {
+              item.setSelectionStart(msg.SelectionStart);
+              item.setSelectionEnd(msg.SelectionStart + msg.SelectionLength);
+              break;
+            }
+          }
+        } else if (message.getType() == MessageType.SourceCodeInserted) {
+
+          if (path!=null) {
+              SourceCodeInsertedMessage msg = (SourceCodeInsertedMessage) message;
+              msg.FileID.substring(0, msg.FileID.length()-2);
+              for (JEditorPane item : editorsList) {
+                if (item.getName() == null ? msg.FileID == null : item.getName().equals(path+msg.FileID.substring(0, msg.FileID.length()-2))) {
+                  action = true;
+                  item.setCaretPosition(msg.InsertPosition);
+                  item.setText(msg.InsertedCode);
+                  break;
+                }
+              }
+          }  else {
+          SourceCodeInsertedMessage msg = (SourceCodeInsertedMessage) message;
+          for (JEditorPane item : editorsList) {
+            if (item.getName() == null ? msg.FileID == null : item.getName().equals(msg.FileID)) {
+              action = true;
+              item.setCaretPosition(msg.InsertPosition);
+              item.setText(msg.InsertedCode);
+              break;
+            }
+          }
+          }
+
+        } else if (message.getType() == MessageType.SourceCodeRemoved) {
+          SourceCodeRemovedMessage msg = (SourceCodeRemovedMessage) message;
+          for (JEditorPane item : editorsList) {
+
+            if (item.getName() == null ? msg.FileID == null : item.getName().equals(msg.FileID)) {
+              item.setSelectionStart(msg.RemovePosition);
+              item.setSelectionEnd(msg.RemovePosition + msg.RemoveLength);
+              item.setText("");
+              break;
+            }
+          }
         }
-      }
-    } else if (message.getType() == MessageType.GroupMessage) {
-      GroupMessage msg = (GroupMessage) message;
-      chatArea.append(msg.UserID + "\n" + msg.Body);
-    } else if (message.getType() == MessageType.NewSourceAdded) {
-      NewSourceAddedMessage msg = (NewSourceAddedMessage) message;
-      filesNumber++;
-      JScrollPane jScrollPane = new JScrollPane();
-      JEditorPane editorArea = new JEditorPane();
-      editorArea.setText(msg.SourceCode);
-      jScrollPane.setViewportView(editorArea);
-      jTabbedPane1.addTab(msg.FileName, jScrollPane);
-      jScrollPane.setName("jScrollPane" + filesNumber);
-      editorArea.setName(msg.FileName);
-      editorsList.add(editorArea);
-    } else if (message.getType() == MessageType.SelectionMade) {
-      SelectionMadeMessage msg = (SelectionMadeMessage) message;
-      for (JEditorPane item : editorsList) {
-        if (item.getName() == null ? msg.FileID == null : item.getName().equals(msg.FileID)) {
-          item.setSelectionStart(msg.SelectionStart);
-          item.setSelectionEnd(msg.SelectionStart + msg.SelectionLength);
-          break;
-        }
-      }
-    } else if (message.getType() == MessageType.SourceCodeInserted) {
-      SourceCodeInsertedMessage msg = (SourceCodeInsertedMessage) message;
-      for (JEditorPane item : editorsList) {
-        if (item.getName() == null ? msg.FileID == null : item.getName().equals(msg.FileID)) {
-          item.setCaretPosition(msg.InsertPosition);
-          item.setText(msg.InsertedCode);
-          break;
-        }
-      }
-    } else if (message.getType() == MessageType.SourceCodeRemoved) {
-      SourceCodeRemovedMessage msg = (SourceCodeRemovedMessage) message;
-      for (JEditorPane item : editorsList) {
-        if (item.getName() == null ? msg.FileID == null : item.getName().equals(msg.FileID)) {
-          item.setSelectionStart(msg.RemovePosition);
-          item.setSelectionEnd(msg.RemovePosition + msg.RemoveLength);
-          item.setText("");
-          break;
-        }
-      }
     }
   }
 
