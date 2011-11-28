@@ -348,7 +348,7 @@ public class CodeAndConference extends javax.swing.JDialog implements ClientMess
           br = new BufferedReader(fr);
           try {
             while ((s2 = br.readLine()) != null) {
-              s = s + s2;
+              s = s + s2+"\n";
             }
             fr.close();
             filesNumber++;
