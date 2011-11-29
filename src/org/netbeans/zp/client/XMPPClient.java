@@ -72,7 +72,7 @@ public class XMPPClient implements PacketListener {
   private PresenceListener _presenceListener;
 
   static {
-    XMPPConnection.DEBUG_ENABLED = true; // wlacza/wylacza debugowanie XMPP
+    XMPPConnection.DEBUG_ENABLED = false; // wlacza/wylacza debugowanie XMPP
   }
 
   /*
