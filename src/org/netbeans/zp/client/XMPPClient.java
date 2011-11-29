@@ -119,7 +119,10 @@ public class XMPPClient implements PacketListener {
    * @return Prawda lub fałsz
    */
   public boolean isConnected() {
-    return _connection.isConnected();
+    if (_connection != null) {
+      return _connection.isConnected();
+    }
+    return false;
   }
 
   /*
